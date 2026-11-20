@@ -145,9 +145,18 @@ flowchart LR
 
 ## 7. Живая схема
 
-Кроме статических диаграмм в репозитории лежит интерактивная версия одного прогона: `docs/index.html` — те же шесть шагов, но с управлением (воспроизвести, пауза, шаг вперёд и назад) и подсказками по каждому шагу. Если в репозитории включён GitHub Pages, она открывается по адресу <https://osmosy.github.io/vector-ray/>, иначе — локально: `python3 -m http.server 8000 --directory docs`, затем <http://localhost:8000/>.
+`docs/vector-ray.architecture.html` — интерактивная схема той же системы: светлая тема по умолчанию, переключение на тёмную, три сценария просмотра («Путь одного прогона», «Где работает модель», «Зачем GraphStorage»), поиск по узлам, трассировка связей, режим презентации и экспорт в SVG/PNG.
 
-Схема работает без интернета: ни шрифтов, ни скриптов извне. При `prefers-reduced-motion: reduce`, без JavaScript и в печати показывается полный статичный кадр, а кнопки скрываются.
+Она собрана генератором archify из спецификации `docs/vector-ray.architecture.json` — исходник в git, поэтому схему можно править как данные, а не как разметку:
+
+```bash
+node ~/.hermes/skills/archify/bin/archify.mjs validate architecture docs/vector-ray.architecture.json --quality showcase
+node ~/.hermes/skills/archify/bin/archify.mjs deliver  architecture docs/vector-ray.architecture.json docs/vector-ray.architecture.html --quality showcase
+```
+
+Публикация — GitHub Pages из каталога `docs`: <https://osmosy.github.io/vector-ray/vector-ray.architecture.html>. Локально достаточно `python3 -m http.server 8000 --directory docs` и открыть <http://localhost:8000/vector-ray.architecture.html>.
+
+Статические Mermaid-схемы выше остаются для чтения в самом Markdown и для диффов: артифакт archify — для показа, Mermaid — для правок текстом.
 
 ## 8. Ссылки
 

@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Vector Ray-Offline — архитектура",
+    "quality_profile": "showcase",
+    "output": "vector-ray.architecture.html",
+    "views": [
+      {
+        "id": "run-path",
+        "label": "Путь одного прогона",
+        "focus": [
+          "user",
+          "ui",
+          "api",
+          "services",
+          "storage",
+          "neo4j"
+        ],
+        "note": "Интерфейс вызывает API, сервисы работают через абстракцию хранилища, факты лежат в Neo4j."
+      },
+      {
+        "id": "model-side",
+        "label": "Где работает модель",
+        "focus": [
+          "services",
+          "ollama"
+        ],
+        "note": "Все промпты и эмбеддинги уходят в локальную Ollama на 11434 — наружу ничего."
+      },
+      {
+        "id": "abstraction",
+        "label": "Зачем GraphStorage",
+        "focus": [
+          "services",
+          "storage",
+          "neo4j"
+        ],
+        "note": "Замена графовой СУБД — один новый класс, сервисы не меняются."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "Пользователь",
+      "sublabel": "браузер",
+      "pos": [
+        30,
+        250
+      ],
+      "size": [
+        130,
+        60
+      ]
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Интерфейс",
+      "sublabel": "Vue 3 + Vite",
+      "pos": [
+        230,
+        250
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "api",
+      "type": "backend",
+      "label": "Flask API",
+      "sublabel": "graph/sim/report",
+      "pos": [
+        440,
+        250
+      ],
+      "size": [
+        160,
+        60
+      ]
+    },
+    {
+      "id": "services",
+      "type": "backend",
+      "label": "Сервисы",
+      "sublabel": "доменные сервисы",
+      "pos": [
+        670,
+        250
+      ],
+      "size": [
+        190,
+        60
+      ]
+    },
+    {
+      "id": "storage",
+      "type": "backend",
+      "label": "GraphStorage",
+      "sublabel": "абстракция",
+      "pos": [
+        670,
+        440
+      ],
+      "size": [
+        150,
+        60
+      ]
+    },
+    {
+      "id": "neo4j",
+      "type": "database",
+      "label": "Neo4j 5.18",
+      "sublabel": "граф и векторы",
+      "pos": [
+        870,
+        440
+      ],
+      "size": [
+        140,
+        60
+      ]
+    },
+    {
+      "id": "ollama",
+      "type": "external",
+      "label": "Ollama",
+      "sublabel": "LLM + embeddings",
+      "pos": [
+        670,
+        90
+      ],
+      "size": [
+        190,
+        60
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Локальный контур",
+      "wraps": [
+        "ui",
+        "api",
+        "services",
+        "storage",
+        "neo4j",
+        "ollama"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "open-ui",
+      "from": "user",
+      "to": "ui",
+      "label": "браузер"
+    },
+    {
+      "id": "call-api",
+      "from": "ui",
+      "to": "api",
+      "label": "REST /api",
+      "variant": "emphasis"
+    },
+    {
+      "id": "dispatch",
+      "from": "api",
+      "to": "services"
+    },
+    {
+      "id": "ask-model",
+      "from": "services",
+      "to": "ollama",
+      "label": "промпты · эмбеддинги",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelAt": [
+        790,
+        190
+      ]
+    },
+    {
+      "id": "via-storage",
+      "from": "services",
+      "to": "storage",
+      "label": "GraphStorage",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        790,
+        350
+      ]
+    },
+    {
+      "id": "cypher",
+      "from": "storage",
+      "to": "neo4j",
+      "label": "Cypher"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Граница доверия и состояние",
+      "items": [
+        "Интерфейс только вызывает API — весь расчёт на бэкенде",
+        "Промпты и эмбеддинги считает Ollama на этой же машине",
+        "Граф знаний — Neo4j 5.18; файлы прогона — backend/uploads (state.json, профили, отчёты)",
+        "Порты: 3000 интерфейс · 5001 API · 7474 и 7687 Neo4j · 11434 Ollama"
+      ]
+    }
+  ]
+}

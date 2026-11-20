@@ -40,7 +40,7 @@ The [original MiroFish](https://github.com/666ghj/MiroFish) was built for the Ch
 
 - **[Руководство пользователя](docs/USER_GUIDE.md)** — установка в Docker и без него, настройка `.env`, работа по шагам, где лежат данные, разбор типичных ошибок.
 - **[Архитектура и диаграммы](docs/ARCHITECTURE.md)** — слои системы, путь одного прогона, решения форка.
-- **[Живая схема](https://osmosy.github.io/vector-ray/)** — интерактивная версия прогона: шаг вперёд, назад, воспроизведение.
+- **[Живая схема архитектуры](https://osmosy.github.io/vector-ray/vector-ray.architecture.html)** — интерактивная схема: темы, три сценария просмотра, поиск по узлам, трассировка связей, экспорт.
 
 ## Quick Start
 
