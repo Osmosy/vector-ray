@@ -372,11 +372,11 @@ class SimulationRunner:
         # If graph memory update enabled, create updater
         if enable_graph_memory_update:
             if not graph_id:
-                raise ValueError("Must provide graph_id when enabling graph memory update")
+                raise ValueError("Для памяти графа знаний нужен graph_id")
             
             try:
                 if not storage:
-                    raise ValueError("Must provide storage (GraphStorage) when enabling graph memory update")
+                    raise ValueError("Для памяти графа знаний нужен storage (GraphStorage)")
                 GraphMemoryManager.create_updater(simulation_id, graph_id, storage)
                 cls._graph_memory_enabled[simulation_id] = True
                 logger.info(f"Graph memory update enabled: simulation_id={simulation_id}, graph_id={graph_id}")
@@ -781,7 +781,7 @@ class SimulationRunner:
         """Stop simulation"""
         state = cls.get_run_state(simulation_id)
         if not state:
-            raise ValueError(f"Simulation does not exist: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
         
         if state.runner_status not in [RunnerStatus.RUNNING, RunnerStatus.PAUSED]:
             raise ValueError(f"Simulation not running: {simulation_id}, status={state.runner_status}")
@@ -1458,7 +1458,7 @@ class SimulationRunner:
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Simulation does not exist: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         ipc_client = SimulationIPCClient(sim_dir)
 
@@ -1520,7 +1520,7 @@ class SimulationRunner:
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Simulation does not exist: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         ipc_client = SimulationIPCClient(sim_dir)
 
@@ -1577,7 +1577,7 @@ class SimulationRunner:
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Simulation does not exist: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
 
         # Get all Agent information from config file
         config_path = os.path.join(sim_dir, "simulation_config.json")
@@ -1630,7 +1630,7 @@ class SimulationRunner:
         """
         sim_dir = os.path.join(cls.RUN_STATE_DIR, simulation_id)
         if not os.path.exists(sim_dir):
-            raise ValueError(f"Simulation does not exist: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
         
         ipc_client = SimulationIPCClient(sim_dir)
         

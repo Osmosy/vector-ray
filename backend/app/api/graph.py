@@ -26,7 +26,7 @@ def _get_storage():
     """Get Neo4jStorage from Flask app extensions."""
     storage = current_app.extensions.get('neo4j_storage')
     if not storage:
-        raise ValueError("GraphStorage not initialized — check Neo4j connection")
+        raise ValueError("GraphStorage не инициализирован — проверьте подключение к Neo4j")
     return storage
 
 
@@ -50,7 +50,7 @@ def get_project(project_id: str):
     if not project:
         return jsonify({
             "success": False,
-            "error": f"Project does not exist: {project_id}"
+            "error": f"Проект не найден: {project_id}"
         }), 404
     
     return jsonify({
@@ -84,12 +84,12 @@ def delete_project(project_id: str):
     if not success:
         return jsonify({
             "success": False,
-            "error": f"Project does not exist or deletion failed: {project_id}"
+            "error": f"Проект не найден или не удалось удалить: {project_id}"
         }), 404
 
     return jsonify({
         "success": True,
-        "message": f"Project deleted: {project_id}"
+        "message": f"Проект удалён: {project_id}"
     })
 
 
@@ -103,7 +103,7 @@ def reset_project(project_id: str):
     if not project:
         return jsonify({
             "success": False,
-            "error": f"Project does not exist: {project_id}"
+            "error": f"Проект не найден: {project_id}"
         }), 404
 
     # Reset to ontology generated state
@@ -119,7 +119,7 @@ def reset_project(project_id: str):
 
     return jsonify({
         "success": True,
-        "message": f"Project reset: {project_id}",
+        "message": f"Проект сброшен: {project_id}",
         "data": project.to_dict()
     })
 
@@ -168,7 +168,7 @@ def generate_ontology():
         if not simulation_requirement:
             return jsonify({
                 "success": False,
-                "error": "Please provide simulation requirement description (simulation_requirement)"
+                "error": "Укажите описание требования симуляции (simulation_requirement)"
             }), 400
 
         # Get uploaded files
@@ -176,7 +176,7 @@ def generate_ontology():
         if not uploaded_files or all(not f.filename for f in uploaded_files):
             return jsonify({
                 "success": False,
-                "error": "Please upload at least one document file"
+                "error": "Загрузите хотя бы один файл документа"
             }), 400
 
         # Create project
@@ -211,7 +211,7 @@ def generate_ontology():
             ProjectManager.delete_project(project.project_id)
             return jsonify({
                 "success": False,
-                "error": "No documents successfully processed. Please check file format"
+                "error": "Ни один документ не удалось обработать. Проверьте формат файла"
             }), 400
 
         # Save extracted text
@@ -298,7 +298,7 @@ def build_graph():
         if not project_id:
             return jsonify({
                 "success": False,
-                "error": "Please provide project_id"
+                "error": "Укажите project_id"
             }), 400
 
         # Get project
@@ -306,7 +306,7 @@ def build_graph():
         if not project:
             return jsonify({
                 "success": False,
-                "error": f"Project does not exist: {project_id}"
+                "error": f"Проект не найден: {project_id}"
             }), 404
 
         # Check project status
@@ -315,13 +315,13 @@ def build_graph():
         if project.status == ProjectStatus.CREATED:
             return jsonify({
                 "success": False,
-                "error": "Project has not generated ontology yet. Please call /ontology/generate first"
+                "error": "У проекта ещё нет онтологии. Сначала вызовите /ontology/generate"
             }), 400
 
         if project.status == ProjectStatus.GRAPH_BUILDING and not force:
             return jsonify({
                 "success": False,
-                "error": "Graph is being built. Do not submit repeatedly. To force rebuild, add force: true",
+                "error": "Граф уже строится, повторно отправлять не нужно. Для принудительной пересборки передайте force: true",
                 "task_id": project.graph_build_task_id
             }), 400
 
@@ -346,7 +346,7 @@ def build_graph():
         if not text:
             return jsonify({
                 "success": False,
-                "error": "Extracted text not found"
+                "error": "Извлечённый текст не найден"
             }), 400
 
         # Get ontology
@@ -354,7 +354,7 @@ def build_graph():
         if not ontology:
             return jsonify({
                 "success": False,
-                "error": "Ontology definition not found"
+                "error": "Определение онтологии не найдено"
             }), 400
 
         # Get storage in request context (background thread cannot access current_app)
@@ -378,7 +378,7 @@ def build_graph():
                 task_manager.update_task(
                     task_id,
                     status=TaskStatus.PROCESSING,
-                    message="Initializing graph build service..."
+                    message="Инициализирую сервис построения графа..."
                 )
 
                 # Create graph builder service (storage passed from outer closure)
@@ -387,7 +387,7 @@ def build_graph():
                 # Chunk text
                 task_manager.update_task(
                     task_id,
-                    message="Chunking text...",
+                    message="Разбиваю текст на фрагменты...",
                     progress=5
                 )
                 chunks = TextProcessor.split_text(
@@ -400,7 +400,7 @@ def build_graph():
                 # Create graph
                 task_manager.update_task(
                     task_id,
-                    message="Creating Zep graph...",
+                    message="Создаю граф...",
                     progress=10
                 )
                 graph_id = builder.create_graph(name=graph_name)
@@ -412,7 +412,7 @@ def build_graph():
                 # Set ontology
                 task_manager.update_task(
                     task_id,
-                    message="Setting ontology definition...",
+                    message="Применяю определение онтологии...",
                     progress=15
                 )
                 builder.set_ontology(graph_id, ontology)
@@ -428,7 +428,7 @@ def build_graph():
 
                 task_manager.update_task(
                     task_id,
-                    message=f"Starting to add {total_chunks} text chunks...",
+                    message=f"Добавляю фрагменты текста: {total_chunks}...",
                     progress=15
                 )
 
@@ -442,14 +442,14 @@ def build_graph():
                 # Neo4j processing is synchronous, no need to wait
                 task_manager.update_task(
                     task_id,
-                    message="Text processing completed, generating graph data...",
+                    message="Обработка текста завершена, генерирую данные графа...",
                     progress=90
                 )
 
                 # Get graph data
                 task_manager.update_task(
                     task_id,
-                    message="Retrieving graph data...",
+                    message="Загружаю данные графа...",
                     progress=95
                 )
                 graph_data = builder.get_graph_data(graph_id)
@@ -466,7 +466,7 @@ def build_graph():
                 task_manager.update_task(
                     task_id,
                     status=TaskStatus.COMPLETED,
-                    message="Graph build completed",
+                    message="Построение графа завершено",
                     progress=100,
                     result={
                         "project_id": project_id,
@@ -489,7 +489,7 @@ def build_graph():
                 task_manager.update_task(
                     task_id,
                     status=TaskStatus.FAILED,
-                    message=f"Build failed: {str(e)}",
+                    message=f"Построение провалилось: {str(e)}",
                     error=traceback.format_exc()
                 )
 
@@ -502,7 +502,7 @@ def build_graph():
             "data": {
                 "project_id": project_id,
                 "task_id": task_id,
-                "message": "Graph build task started. Query progress via /task/{task_id}"
+                "message": "Задача построения графа запущена. Прогресс — через /task/{task_id}"
             }
         })
         
@@ -526,7 +526,7 @@ def get_task(task_id: str):
     if not task:
         return jsonify({
             "success": False,
-            "error": f"Task does not exist: {task_id}"
+            "error": f"Задача не найдена: {task_id}"
         }), 404
 
     return jsonify({
@@ -586,7 +586,7 @@ def delete_graph(graph_id: str):
 
         return jsonify({
             "success": True,
-            "message": f"Graph deleted: {graph_id}"
+            "message": f"Граф удалён: {graph_id}"
         })
 
     except Exception as e:

@@ -427,7 +427,7 @@ const doStartSimulation = async () => {
     }
   } catch (err) {
     startError.value = err.message
-    addLog(`✗ Start exception: ${err.message}`)
+    addLog(`✗ Исключение при запуске: ${err.message}`)
     emit('update-status', 'error')
   } finally {
     isStarting.value = false
@@ -653,12 +653,12 @@ const handleNextStep = async () => {
   }
 
   if (isGeneratingReport.value) {
-    addLog('Report generation request sent, please wait...')
+    addLog('Запрос на генерацию отчёта отправлен, подождите...')
     return
   }
 
   isGeneratingReport.value = true
-  addLog('Starting report generation...')
+  addLog('Запускаю генерацию отчёта...')
 
   try {
     const res = await generateReport({
@@ -668,16 +668,16 @@ const handleNextStep = async () => {
 
     if (res.success && res.data) {
       const reportId = res.data.report_id
-      addLog(`✓ Report generation task started: ${reportId}`)
+      addLog(`✓ Задача генерации отчёта запущена: ${reportId}`)
 
       // Navigate to report page
       router.push({ name: 'Report', params: { reportId } })
     } else {
-      addLog(`✗ Failed to start report generation: ${res.error || 'Unknown error'}`)
+      addLog(`✗ Не удалось запустить генерацию отчёта: ${res.error || 'неизвестная ошибка'}`)
       isGeneratingReport.value = false
     }
   } catch (err) {
-    addLog(`✗ Report generation exception: ${err.message}`)
+    addLog(`✗ Исключение при генерации отчёта: ${err.message}`)
     isGeneratingReport.value = false
   }
 }

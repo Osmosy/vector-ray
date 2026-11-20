@@ -545,7 +545,7 @@ const selectAgent = (agent, idx) => {
 
   // Restore this Agent's chat history
   chatHistory.value = chatHistoryCache.value[`agent_${idx}`] || []
-  addLog(`Selected conversation target: ${agent.username}`)
+  addLog(`Выбран собеседник: ${agent.username}`)
 }
 
 const formatTime = (timestamp) => {
@@ -672,7 +672,7 @@ const sendMessage = async () => {
       await sendToAgent(message)
     }
   } catch (err) {
-    addLog(`Send failed: ${err.message}`)
+    addLog(`Не удалось отправить: ${err.message}`)
     chatHistory.value.push({
       role: 'assistant',
       content: `Sorry, an error occurred: ${err.message}`,
@@ -687,7 +687,7 @@ const sendMessage = async () => {
 }
 
 const sendToReportAgent = async (message) => {
-  addLog(`Send to Report Agent: ${message.substring(0, 50)}...`)
+  addLog(`Отправка агенту отчёта: ${message.substring(0, 50)}...`)
 
   // Build chat history for API
   const historyForApi = chatHistory.value
@@ -711,7 +711,7 @@ const sendToReportAgent = async (message) => {
       content: responseContent,
       timestamp: new Date().toISOString()
     })
-    addLog('Report Agent replied')
+    addLog('Агент отчёта ответил')
   } else {
     throw new Error(res.error || 'Request failed')
   }
@@ -722,7 +722,7 @@ const sendToAgent = async (message) => {
     throw new Error('Please select a simulated individual first')
   }
 
-  addLog(`Send to ${selectedAgent.value.username}: ${message.substring(0, 50)}...`)
+  addLog(`Отправка ${selectedAgent.value.username}: ${message.substring(0, 50)}...`)
 
   // Build prompt with chat history
   let prompt = message
@@ -772,7 +772,7 @@ const sendToAgent = async (message) => {
         content: responseContent,
         timestamp: new Date().toISOString()
       })
-      addLog(`${selectedAgent.value.username} replied`)
+      addLog(`${selectedAgent.value.username} ответил`)
     } else {
       throw new Error('No response data')
     }
@@ -814,7 +814,7 @@ const submitSurvey = async () => {
   if (selectedAgents.value.size === 0 || !surveyQuestion.value.trim()) return
 
   isSurveying.value = true
-  addLog(`Sending survey to ${selectedAgents.value.size} targets...`)
+  addLog(`Отправляю опрос ${selectedAgents.value.size} адресатам...`)
 
   try {
     const interviews = Array.from(selectedAgents.value).map(idx => ({
@@ -868,12 +868,12 @@ const submitSurvey = async () => {
       }
 
       surveyResults.value = surveyResultsList
-      addLog(`Received ${surveyResults.value.length} replies`)
+      addLog(`Получено ответов: ${surveyResults.value.length}`)
     } else {
       throw new Error(res.error || 'Request failed')
     }
   } catch (err) {
-    addLog(`Survey submission failed: ${err.message}`)
+    addLog(`Не удалось отправить опрос: ${err.message}`)
   } finally {
     isSurveying.value = false
   }
@@ -884,7 +884,7 @@ const loadReportData = async () => {
   if (!props.reportId) return
 
   try {
-    addLog(`Loading report data: ${props.reportId}`)
+    addLog(`Загружаю данные отчёта: ${props.reportId}`)
 
     // Get report info
     const reportRes = await getReport(props.reportId)
@@ -893,7 +893,7 @@ const loadReportData = async () => {
       await loadAgentLogs()
     }
   } catch (err) {
-    addLog(`Failed to load report: ${err.message}`)
+    addLog(`Не удалось загрузить отчёт: ${err.message}`)
   }
 }
 
@@ -915,10 +915,10 @@ const loadAgentLogs = async () => {
         }
       })
 
-      addLog('Report data loading completed')
+      addLog('Данные отчёта загружены')
     }
   } catch (err) {
-    addLog(`Failed to load report logs: ${err.message}`)
+    addLog(`Не удалось загрузить лог отчёта: ${err.message}`)
   }
 }
 
@@ -929,10 +929,10 @@ const loadProfiles = async () => {
     const res = await getSimulationProfilesRealtime(props.simulationId, 'reddit')
     if (res.success && res.data) {
       profiles.value = res.data.profiles || []
-      addLog(`Loaded ${profiles.value.length} simulated individuals`)
+      addLog(`Загружено агентов симуляции: ${profiles.value.length}`)
     }
   } catch (err) {
-    addLog(`Failed to load simulated individuals: ${err.message}`)
+    addLog(`Не удалось загрузить агентов симуляции: ${err.message}`)
   }
 }
 
@@ -946,7 +946,7 @@ const handleClickOutside = (e) => {
 
 // Lifecycle
 onMounted(() => {
-  addLog('Step5 Interaction initialized')
+  addLog('Шаг 5: инициализация взаимодействия')
   loadReportData()
   loadProfiles()
   document.addEventListener('click', handleClickOutside)

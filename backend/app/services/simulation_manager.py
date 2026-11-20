@@ -265,7 +265,7 @@ class SimulationManager:
         """
         state = self._load_simulation_state(simulation_id)
         if not state:
-            raise ValueError(f"Simulation does not exist: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
         
         try:
             state.status = SimulationStatus.PREPARING
@@ -279,14 +279,14 @@ class SimulationManager:
             
             # ========== Phase 1: Read and filter entities ==========
             if progress_callback:
-                progress_callback("reading", 0, "Connecting to graph...")
+                progress_callback("reading", 0, "Подключаюсь к графу...")
 
             if not storage:
                 raise ValueError("storage (GraphStorage) is required for prepare_simulation")
             reader = EntityReader(storage)
             
             if progress_callback:
-                progress_callback("reading", 30, "Reading node data...")
+                progress_callback("reading", 30, "Читаю данные узлов...")
             
             filtered = reader.filter_defined_entities(
                 graph_id=state.graph_id,
@@ -300,7 +300,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "reading", 100, 
-                    f"Completed, total {filtered.filtered_count} entities",
+                    f"Готово, сущностей: {filtered.filtered_count}",
                     current=filtered.filtered_count,
                     total=filtered.filtered_count
                 )
@@ -317,7 +317,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "generating_profiles", 0, 
-                    "Starting generation...",
+                    "Начинаю генерацию...",
                     current=0,
                     total=total_entities
                 )
@@ -365,7 +365,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "generating_profiles", 95, 
-                    "Saving Profile files...",
+                    "Сохраняю файлы профилей...",
                     current=total_entities,
                     total=total_entities
                 )
@@ -388,7 +388,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "generating_profiles", 100, 
-                    f"Completed, total {len(profiles)} Profiles",
+                    f"Готово, профилей: {len(profiles)}",
                     current=len(profiles),
                     total=len(profiles)
                 )
@@ -397,7 +397,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "generating_config", 0, 
-                    "Analyzing simulation requirements...",
+                    "Анализирую требования симуляции...",
                     current=0,
                     total=3
                 )
@@ -407,7 +407,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "generating_config", 30, 
-                    "Calling LLM to generate config...",
+                    "Вызываю LLM для генерации конфигурации...",
                     current=1,
                     total=3
                 )
@@ -426,7 +426,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "generating_config", 70, 
-                    "Saving config files...",
+                    "Сохраняю файлы конфигурации...",
                     current=2,
                     total=3
                 )
@@ -442,7 +442,7 @@ class SimulationManager:
             if progress_callback:
                 progress_callback(
                     "generating_config", 100, 
-                    "Config generation completed",
+                    "Генерация конфигурации завершена",
                     current=3,
                     total=3
                 )
@@ -494,7 +494,7 @@ class SimulationManager:
         """Get Agent Profiles for simulation"""
         state = self._load_simulation_state(simulation_id)
         if not state:
-            raise ValueError(f"Simulation does not exist: {simulation_id}")
+            raise ValueError(f"Симуляция не найдена: {simulation_id}")
         
         sim_dir = self._get_simulation_dir(simulation_id)
         profile_path = os.path.join(sim_dir, f"{platform}_profiles.json")

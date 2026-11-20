@@ -483,7 +483,7 @@ const goHome = () => {
 
 const goToNextStep = () => {
   // TODO: Enter environment setup step
-  alert('Environment setup in development...')
+  alert('Настройка окружения в разработке...')
 }
 
 const toggleFullScreen = () => {

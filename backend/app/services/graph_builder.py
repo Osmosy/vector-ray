@@ -103,7 +103,7 @@ class GraphBuilderService:
                 task_id,
                 status=TaskStatus.PROCESSING,
                 progress=5,
-                message="Starting graph building..."
+                message="Начинаю построение графа..."
             )
 
             # 1. Create graph
@@ -111,7 +111,7 @@ class GraphBuilderService:
             self.task_manager.update_task(
                 task_id,
                 progress=10,
-                message=f"Graph created: {graph_id}"
+                message=f"Граф создан: {graph_id}"
             )
 
             # 2. Set ontology
@@ -119,7 +119,7 @@ class GraphBuilderService:
             self.task_manager.update_task(
                 task_id,
                 progress=15,
-                message="Ontology set"
+                message="Онтология применена"
             )
 
             # 3. Text chunking
@@ -128,7 +128,7 @@ class GraphBuilderService:
             self.task_manager.update_task(
                 task_id,
                 progress=20,
-                message=f"Text split into {total_chunks} chunks"
+                message=f"Текст разбит на {total_chunks} фрагментов"
             )
 
             # 4. Send data in batches (NER + embedding + Neo4j insert — synchronous)
@@ -147,7 +147,7 @@ class GraphBuilderService:
             self.task_manager.update_task(
                 task_id,
                 progress=85,
-                message="Data processing completed, getting graph information..."
+                message="Обработка данных завершена, получаю информацию о графе..."
             )
 
             # 6. Get graph information
@@ -203,7 +203,7 @@ class GraphBuilderService:
             if progress_callback:
                 progress = (i + len(batch_chunks)) / total_chunks
                 progress_callback(
-                    f"Processing batch {batch_num}/{total_batches} ({len(batch_chunks)} chunks)...",
+                    f"Обрабатываю пакет {batch_num}/{total_batches} ({len(batch_chunks)} фрагм.)...",
                     progress
                 )
 
@@ -229,7 +229,7 @@ class GraphBuilderService:
                         f"after {elapsed:.1f}s: {e}"
                     )
                     if progress_callback:
-                        progress_callback(f"Batch {batch_num} processing failed: {str(e)}", 0)
+                        progress_callback(f"Пакет {batch_num} не обработан: {str(e)}", 0)
                     raise
 
         logger.info(f"[graph_build] All {total_chunks} chunks processed successfully")

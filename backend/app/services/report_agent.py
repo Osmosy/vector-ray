@@ -134,7 +134,7 @@ class ReportLogger:
             action="planning_complete",
             stage="planning",
             details={
-                "message": "Outline planning completed",
+                "message": "Планирование структуры завершено",
                 "outline": outline_dict
             }
         )
@@ -1191,7 +1191,7 @@ class ReportAgent:
         logger.info("Starting to plan report outline...")
 
         if progress_callback:
-            progress_callback("planning", 0, "Analyzing simulation requirements...")
+            progress_callback("planning", 0, "Анализирую требования симуляции...")
 
         # First get simulation context
         context = self.graph_tools.get_simulation_context(
@@ -1200,7 +1200,7 @@ class ReportAgent:
         )
 
         if progress_callback:
-            progress_callback("planning", 30, "Generating report outline...")
+            progress_callback("planning", 30, "Генерирую структуру отчёта...")
         
         system_prompt = PLAN_SYSTEM_PROMPT
         user_prompt = PLAN_USER_PROMPT_TEMPLATE.format(
@@ -1222,7 +1222,7 @@ class ReportAgent:
             )
             
             if progress_callback:
-                progress_callback("planning", 80, "Parsing outline structure...")
+                progress_callback("planning", 80, "Разбираю структуру отчёта...")
 
             # Parse outline
             sections = []
@@ -1239,7 +1239,7 @@ class ReportAgent:
             )
 
             if progress_callback:
-                progress_callback("planning", 100, "Outline planning completed")
+                progress_callback("planning", 100, "Планирование структуры завершено")
 
             logger.info(f"Outline planning completed: {len(sections)} sections")
             return outline
@@ -1644,7 +1644,7 @@ class ReportAgent:
             # phase1: planoutline
             report.status = ReportStatus.PLANNING
             ReportManager.update_progress(
-                report_id, "planning", 5, "Start planning report outline...",
+                report_id, "planning", 5, "Начинаю планирование структуры отчёта...",
                 completed_sections=[]
             )
             
@@ -1652,7 +1652,7 @@ class ReportAgent:
             self.report_logger.log_planning_start()
             
             if progress_callback:
-                progress_callback("planning", 0, "Start planning report outline...")
+                progress_callback("planning", 0, "Начинаю планирование структуры отчёта...")
             
             outline = self.plan_outline(
                 progress_callback=lambda stage, prog, msg: 

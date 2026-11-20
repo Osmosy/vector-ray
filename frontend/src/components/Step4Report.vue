@@ -2173,7 +2173,7 @@ const stopPolling = () => {
 // Lifecycle
 onMounted(() => {
   if (props.reportId) {
-    addLog(`Report Agent initialized: ${props.reportId}`)
+    addLog(`Агент отчёта инициализирован: ${props.reportId}`)
     startPolling()
   }
 })

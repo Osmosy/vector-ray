@@ -148,7 +148,7 @@ class TaskManager:
             task_id,
             status=TaskStatus.COMPLETED,
             progress=100,
-            message="Task completed",
+            message="Задача завершена",
             result=result
         )
 
@@ -157,7 +157,7 @@ class TaskManager:
         self.update_task(
             task_id,
             status=TaskStatus.FAILED,
-            message="Task failed",
+            message="Задача провалилась",
             error=error
         )
 

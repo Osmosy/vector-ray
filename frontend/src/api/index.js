@@ -15,7 +15,7 @@ service.interceptors.request.use(
     return config
   },
   error => {
-    console.error('Request error:', error)
+    console.error('Ошибка запроса:', error)
     return Promise.reject(error)
   }
 )
@@ -27,23 +27,24 @@ service.interceptors.response.use(
 
     // If the returned status code is not success, throw error
     if (!res.success && res.success !== undefined) {
-      console.error('API Error:', res.error || res.message || 'Unknown error')
-      return Promise.reject(new Error(res.error || res.message || 'Error'))
+      console.error('Ошибка API:', res.error || res.message || 'неизвестная ошибка')
+      return Promise.reject(new Error(res.error || res.message || 'Ошибка запроса'))
     }
 
     return res
   },
   error => {
-    console.error('Response error:', error)
+    console.error('Ошибка ответа:', error)
 
-    // Handle timeout
+    // Текст ошибки уходит в логи интерфейса — переводим технические сообщения axios
     if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
-      console.error('Request timeout')
-    }
-
-    // Handle network error
-    if (error.message === 'Network Error') {
-      console.error('Network error - please check your connection')
+      error.message = 'Сервер не ответил вовремя'
+    } else if (error.message === 'Network Error') {
+      error.message = 'Нет связи с сервером — проверьте, запущен ли бэкенд'
+    } else if (error.response?.status === 404) {
+      error.message = error.response?.data?.error || 'Запрошенный объект не найден'
+    } else if (error.response?.status >= 500) {
+      error.message = error.response?.data?.error || 'Внутренняя ошибка сервера'
     }
 
     return Promise.reject(error)
