@@ -418,7 +418,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData } from '../api/graph'
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
 import * as d3 from 'd3'
-import { translateEntity } from '../utils/labels.js'
+import { translateEntity, translateRelation } from '../utils/labels.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -502,25 +502,9 @@ const closeDetailPanel = () => {
 
 
 
-// Переводы типов связей
-const relationTranslations = {
-  'WORKS_FOR': 'Работает в',
-  'PURCHASES_FROM': 'Покупает у',
-  'REPORTS_ON': 'Отчёт о',
-  'ADVOCATES_AGAINST': 'Выступает против',
-  'REGULATES': 'Регулирует',
-  'OWNS': 'Владеет',
-  'SUPPLIES_TO': 'Поставляет',
-  'COMPETES_WITH': 'Конкурирует с',
-  'PREFERS': 'Предпочитает',
-  'CRITICIZES': 'Критикует',
-  'RELATED_TO': 'Связан с',
-  'PART_OF': 'Часть',
-  'LOCATED_IN': 'Находится в',
-}
+
 
 // Функция перевода
-const translateRelation = (name) => relationTranslations[name] || name
 
 // Format date
 const formatDate = (dateStr) => {
@@ -1029,7 +1013,7 @@ const renderGraph = () => {
     .attr('font-size', '9px')
     .attr('fill', '#999')
     .attr('text-anchor', 'middle')
-    .text(d => d.type.length > 15 ? d.type.substring(0, 12) + '...' : d.type)
+    .text(d => translateRelation(d.type))
 
   // Draw nodes
   const node = g.append('g')

@@ -95,7 +95,7 @@
               <div class="section-title">Метки:</div>
               <div class="labels-list">
                 <span v-for="label in selectedItem.data.labels" :key="label" class="label-tag">
-                  {{ label }}
+                  {{ translateEntity(label) }}
                 </span>
               </div>
             </div>
@@ -219,7 +219,7 @@
       <div class="legend-items">
         <div class="legend-item" v-for="type in entityTypes" :key="type.name">
           <span class="legend-dot" :style="{ background: type.color }"></span>
-          <span class="legend-label">{{ type.name }}</span>
+          <span class="legend-label">{{ translateEntity(type.name) }}</span>
         </div>
       </div>
     </div>
@@ -238,7 +238,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import * as d3 from 'd3'
-import { translateEntity } from '../utils/labels.js'
+import { translateEntity, translateRelation } from '../utils/labels.js'
 
 const props = defineProps({
   graphData: Object,
@@ -620,7 +620,7 @@ const renderGraph = () => {
   const linkLabels = linkGroup.selectAll('text')
     .data(edges)
     .enter().append('text')
-    .text(d => d.name)
+    .text(d => translateRelation(d.name))
     .attr('font-size', '9px')
     .attr('fill', '#666')
     .attr('text-anchor', 'middle')
