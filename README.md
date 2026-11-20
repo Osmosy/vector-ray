@@ -37,12 +37,6 @@ The [original Vector Ray](https://github.com/666ghj/MiroFish) was built for the 
 4. **Report** — A ReportAgent analyzes the post-simulation environment, interviews a focus group of agents, searches the knowledge graph for evidence, and generates a structured analysis.
 5. **Interaction** — Chat with any agent from the simulated world. Ask them why they posted what they posted. Full memory and personality persists.
 
-## Screenshot
-
-<div align="center">
-<img src="./static/image/vector-ray-offline-screenshot.jpg" alt="Vector Ray Offline — English UI" width="100%"/>
-</div>
-
 ## Quick Start
 
 ### Prerequisites
