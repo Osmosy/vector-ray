@@ -23,7 +23,7 @@ The [original MiroFish](https://github.com/666ghj/MiroFish) was built for the Ch
 | Original MiroFish | Vector Ray-Offline |
 |---|---|
 | Chinese UI | **Russian UI** (interface and LLM prompts translated) |
-| Zep Cloud (graph memory) | **Neo4j Community Edition 5.15** |
+| Zep Cloud (graph memory) | **Neo4j Community Edition 5.18** |
 | DashScope / OpenAI API (LLM) | **Ollama** (qwen2.5, llama3, etc.) |
 | Zep Cloud embeddings | **nomic-embed-text** via Ollama |
 | Cloud API keys required | **Zero cloud dependencies** |
@@ -36,12 +36,17 @@ The [original MiroFish](https://github.com/666ghj/MiroFish) was built for the Ch
 4. **Report** — A ReportAgent analyzes the post-simulation environment, interviews a focus group of agents, searches the knowledge graph for evidence, and generates a structured analysis.
 5. **Interaction** — Chat with any agent from the simulated world. Ask them why they posted what they posted. Full memory and personality persists.
 
+## Documentation (Russian)
+
+- **[Руководство пользователя](docs/USER_GUIDE.md)** — установка в Docker и без него, настройка `.env`, работа по шагам, где лежат данные, разбор типичных ошибок.
+- **[Архитектура и диаграммы](docs/ARCHITECTURE.md)** — слои системы, путь одного прогона, решения форка.
+
 ## Quick Start
 
 ### Prerequisites
 
 - Docker & Docker Compose (recommended), **or**
-- Python 3.11+, Node.js 18+, Neo4j 5.15+, Ollama
+- Python 3.11+, Node.js 18+, Neo4j 5.18+, Ollama
 
 ### Option A: Docker (easiest)
 
@@ -50,15 +55,21 @@ git clone https://github.com/Osmosy/vector-ray.git
 cd vector-ray
 cp .env.example .env
 
-# Start all services (Neo4j, Ollama, Vector Ray)
-docker compose up -d
+# Ollama stays on the host — compose brings up only Neo4j and the app
+ollama pull qwen2.5:14b
+ollama pull nomic-embed-text
 
-# Pull the required models into Ollama
-docker exec vector-ray-ollama ollama pull qwen2.5:32b
-docker exec vector-ray-ollama ollama pull nomic-embed-text
+# Inside the container localhost means the container itself,
+# so point it at the host and match the password compose sets for Neo4j
+sed -i 's|http://localhost:11434|http://host.docker.internal:11434|g' .env
+sed -i 's|^NEO4J_URI=.*|NEO4J_URI=bolt://neo4j:7687|' .env
+sed -i 's|^NEO4J_PASSWORD=.*|NEO4J_PASSWORD=vectorray123|' .env
+
+docker compose up -d
+docker compose ps      # both containers Up (healthy)
 ```
 
-Open `http://localhost:3000` — that's it.
+Open `http://localhost:3000` — that's it. Neo4j Browser is on `http://localhost:7474`.
 
 ### Option B: Manual
 
@@ -68,7 +79,7 @@ Open `http://localhost:3000` — that's it.
 docker run -d --name neo4j \
   -p 7474:7474 -p 7687:7687 \
   -e NEO4J_AUTH=neo4j/vector-ray \
-  neo4j:5.15-community
+  neo4j:5.18-community
 ```
 
 **2. Start Ollama & pull models**
@@ -153,7 +164,7 @@ This fork introduces a clean abstraction layer between the application and the g
                │
         ┌──────▼──────┐
         │  Neo4j CE   │
-        │  5.15       │
+        │  5.18       │
         └─────────────┘
 ```
 
@@ -185,14 +196,14 @@ CPU-only mode works but is significantly slower for LLM inference. For lighter s
 
 ## License
 
-AGPL-3.0 — same as the original Vector Ray project. See [LICENSE](./LICENSE).
+AGPL-3.0 — same as the original MiroFish project. See [LICENSE](./LICENSE).
 
 ## Credits & Attribution
 
-This is a modified fork of [Vector Ray](https://github.com/666ghj/MiroFish) by [666ghj](https://github.com/666ghj), originally supported by [Shanda Group](https://www.shanda.com/). The simulation engine is powered by [OASIS](https://github.com/camel-ai/oasis) from the CAMEL-AI team.
+This is a modified fork of [MiroFish](https://github.com/666ghj/MiroFish) by [666ghj](https://github.com/666ghj), originally supported by [Shanda Group](https://www.shanda.com/). The simulation engine is powered by [OASIS](https://github.com/camel-ai/oasis) from the CAMEL-AI team.
 
 **Modifications in this fork:**
-- Backend migrated from Zep Cloud to local Neo4j CE 5.15 + Ollama
+- Backend migrated from Zep Cloud to local Neo4j CE 5.18 + Ollama
 - Frontend and LLM prompts translated from Chinese to Russian; report agent writes Russian reports
 - All Zep references replaced with Neo4j across the UI
 - Rebranded to Vector Ray Offline
