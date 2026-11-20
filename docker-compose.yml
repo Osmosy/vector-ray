@@ -1,8 +1,6 @@
 services:
   vector-ray:
     build: .
-    # Or use pre-built image (when available):
-    # image: ghcr.io/nikmcfly/vector-ray-offline:latest
     container_name: vector-ray-offline
     env_file:
       - .env

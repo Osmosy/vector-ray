@@ -4,13 +4,12 @@
 
 # Vector Ray-Offline
 
-**Fully local fork of [Vector Ray](https://github.com/666ghj/MiroFish) — no cloud APIs required. English UI.**
+**Fully local fork of [MiroFish](https://github.com/666ghj/MiroFish) — no cloud APIs required. English UI.**
 
 *A multi-agent swarm intelligence engine that simulates public opinion, market sentiment, and social dynamics. Entirely on your hardware.*
 
-[![GitHub Stars](https://img.shields.io/github/stars/nikmcfly/MiroFish-Offline?style=flat-square&color=DAA520)](https://github.com/nikmcfly/MiroFish-Offline/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/nikmcfly/MiroFish-Offline?style=flat-square)](https://github.com/nikmcfly/MiroFish-Offline/network)
-[![Docker](https://img.shields.io/badge/Docker-Build-2496ED?style=flat-square&logo=docker&logoColor=white)](https://hub.docker.com/)
+[![GitHub Stars](https://img.shields.io/github/stars/Osmosy/vector-ray?style=flat-square&color=DAA520)](https://github.com/Osmosy/vector-ray/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/Osmosy/vector-ray?style=flat-square)](https://github.com/Osmosy/vector-ray/network)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue?style=flat-square)](./LICENSE)
 
 </div>
@@ -19,9 +18,9 @@
 
 Vector Ray is a multi-agent simulation engine: upload any document (press release, policy draft, financial report), and it generates hundreds of AI agents with unique personalities that simulate the public reaction on social media. Posts, arguments, opinion shifts — hour by hour.
 
-The [original Vector Ray](https://github.com/666ghj/MiroFish) was built for the Chinese market (Chinese UI, Zep Cloud for knowledge graphs, DashScope API). This fork makes it **fully local and fully English**:
+The [original MiroFish](https://github.com/666ghj/MiroFish) was built for the Chinese market (Chinese UI, Zep Cloud for knowledge graphs, DashScope API). This fork makes it **fully local and fully English**:
 
-| Original Vector Ray | Vector Ray-Offline |
+| Original MiroFish | Vector Ray-Offline |
 |---|---|
 | Chinese UI | **English UI** (1,000+ strings translated) |
 | Zep Cloud (graph memory) | **Neo4j Community Edition 5.15** |
@@ -47,8 +46,8 @@ The [original Vector Ray](https://github.com/666ghj/MiroFish) was built for the 
 ### Option A: Docker (easiest)
 
 ```bash
-git clone https://github.com/nikmcfly/MiroFish-Offline.git
-cd Vector Ray-Offline
+git clone https://github.com/Osmosy/vector-ray.git
+cd vector-ray
 cp .env.example .env
 
 # Start all services (Neo4j, Ollama, Vector Ray)
