@@ -4,7 +4,7 @@
 
 # Vector Ray-Offline
 
-**Fully local fork of [MiroFish](https://github.com/666ghj/MiroFish) — no cloud APIs required. English UI.**
+**Fully local fork of [MiroFish](https://github.com/666ghj/MiroFish) — no cloud APIs required. Russian UI.**
 
 *A multi-agent swarm intelligence engine that simulates public opinion, market sentiment, and social dynamics. Entirely on your hardware.*
 
@@ -18,11 +18,11 @@
 
 Vector Ray is a multi-agent simulation engine: upload any document (press release, policy draft, financial report), and it generates hundreds of AI agents with unique personalities that simulate the public reaction on social media. Posts, arguments, opinion shifts — hour by hour.
 
-The [original MiroFish](https://github.com/666ghj/MiroFish) was built for the Chinese market (Chinese UI, Zep Cloud for knowledge graphs, DashScope API). This fork makes it **fully local and fully English**:
+The [original MiroFish](https://github.com/666ghj/MiroFish) was built for the Chinese market (Chinese UI, Zep Cloud for knowledge graphs, DashScope API). This fork makes it **fully local and Russian-localized**:
 
 | Original MiroFish | Vector Ray-Offline |
 |---|---|
-| Chinese UI | **English UI** (1,000+ strings translated) |
+| Chinese UI | **Russian UI** (interface and LLM prompts translated) |
 | Zep Cloud (graph memory) | **Neo4j Community Edition 5.15** |
 | DashScope / OpenAI API (LLM) | **Ollama** (qwen2.5, llama3, etc.) |
 | Zep Cloud embeddings | **nomic-embed-text** via Ollama |
@@ -193,6 +193,6 @@ This is a modified fork of [Vector Ray](https://github.com/666ghj/MiroFish) by [
 
 **Modifications in this fork:**
 - Backend migrated from Zep Cloud to local Neo4j CE 5.15 + Ollama
-- Entire frontend translated from Chinese to English (20 files, 1,000+ strings)
+- Frontend and LLM prompts translated from Chinese to Russian; report agent writes Russian reports
 - All Zep references replaced with Neo4j across the UI
 - Rebranded to Vector Ray Offline

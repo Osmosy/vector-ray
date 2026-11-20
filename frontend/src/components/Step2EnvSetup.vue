@@ -330,7 +330,7 @@
             <!-- LLM Configuration inference -->
             <div v-if="simulationConfig.generation_reasoning" class="config-block">
               <div class="config-block-header">
-                <span class="config-block-title">LLM Configuration inference</span>
+                <span class="config-block-title">Вывод LLM о конфигурации</span>
               </div>
               <div class="reasoning-content">
                 <div 
@@ -440,7 +440,7 @@
             <div class="rounds-header">
               <div class="header-left">
                 <span class="section-title">Настройка раундов симуляции</span>
-                <span class="section-desc">Vector Ray Automatically plan and infer reality <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> hours，Each round represents reality <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> minutes time elapsed</span>
+                <span class="section-desc">Vector Ray сам планирует и выводит горизонт: <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> ч, каждый раунд — <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> мин реального времени</span>
               </div>
               <label class="switch-control">
                 <input type="checkbox" v-model="useCustomRounds">
@@ -514,14 +514,14 @@
               class="action-btn secondary"
               @click="$emit('go-back')"
             >
-              ← Return graph construction
+              ← Вернуться к построению графа
             </button>
             <button 
               class="action-btn primary"
               :disabled="phase < 4"
               @click="handleStartSimulation"
             >
-              Start dual world parallel simulation ➝
+              Запустить параллельную симуляцию двух миров ➝
             </button>
           </div>
         </div>
@@ -618,7 +618,7 @@
     <!-- Bottom Info / Logs -->
     <div class="system-logs">
       <div class="log-header">
-        <span class="log-title">SYSTEM DASHBOARD</span>
+        <span class="log-title">СИСТЕМНЫЙ ЛОГ</span>
         <span class="log-id">{{ simulationId || 'NO_SIMULATION' }}</span>
       </div>
       <div class="log-content" ref="logContent">
