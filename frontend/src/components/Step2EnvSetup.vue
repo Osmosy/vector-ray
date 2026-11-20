@@ -955,9 +955,7 @@ const pollPrepareStatus = async () => {
         stopProfilesPolling()
         await loadPreparedData()
       } else if (data.status === 'failed') {
-        addLog(`✗ Preparation failed: ${data.error || 'Unknown error'}`)
-        stopPolling()
-        stopProfilesPolling()
+        handlePrepareFailure(data.error)
       }
     }
   } catch (err) {
@@ -972,6 +970,11 @@ const fetchProfilesRealtime = async () => {
     const res = await getSimulationProfilesRealtime(props.simulationId, 'reddit')
     
     if (res.success && res.data) {
+      if (res.data.status === 'failed' || res.data.error) {
+        handlePrepareFailure(res.data.error)
+        return
+      }
+
       const prevCount = profiles.value.length
       profiles.value = res.data.profiles || []
       // Only when API Update only when returning valid values，Avoid overwriting existing valid values
@@ -1021,6 +1024,15 @@ const stopConfigPolling = () => {
   }
 }
 
+// Провал подготовки: гасим все опросы, пишем причину, отдаём ошибку наверх
+const handlePrepareFailure = (message) => {
+  stopPolling()
+  stopProfilesPolling()
+  stopConfigPolling()
+  addLog(`✗ Подготовка не удалась: ${message || 'причина неизвестна'}`)
+  emit('update-status', 'error')
+}
+
 const fetchConfigRealtime = async () => {
   if (!props.simulationId) return
   
@@ -1029,6 +1041,11 @@ const fetchConfigRealtime = async () => {
     
     if (res.success && res.data) {
       const data = res.data
+
+      if (data.status === 'failed' || data.error) {
+        handlePrepareFailure(data.error)
+        return
+      }
       
       // Output configuration generation phase log（Avoid duplication）
       if (data.generation_stage && data.generation_stage !== lastLoggedConfigStage) {
@@ -1089,7 +1106,14 @@ const loadPreparedData = async () => {
   try {
     const res = await getSimulationConfigRealtime(props.simulationId)
     if (res.success && res.data) {
-      if (res.data.config_generated && res.data.config) {
+      const configState = res.data
+
+      if (configState.status === 'failed' || configState.error) {
+        handlePrepareFailure(configState.error)
+        return
+      }
+
+      if (configState.config_generated && configState.config) {
         simulationConfig.value = res.data.config
         addLog('✓ Simulation configuration loaded successfully')
         
@@ -1103,10 +1127,12 @@ const loadPreparedData = async () => {
         addLog('✓ Настройка окружения завершена, можно запускать симуляцию')
         phase.value = 4
         emit('update-status', 'completed')
-      } else {
+      } else if (configState.is_generating) {
         // Configuration not yet generated，Start polling
         addLog('Configuration generating，Start polling wait...')
         startConfigPolling()
+      } else {
+        handlePrepareFailure('Генерация конфигурации не идёт и не завершена')
       }
     }
   } catch (err) {
