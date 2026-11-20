@@ -2,11 +2,11 @@
   <div class="home-container">
     <!-- Top Navigation Bar -->
     <nav class="navbar" :style="s.navbar">
-      <div class="nav-brand" :style="s.navBrand">MIROFISH OFFLINE</div>
-      <div class="nav-links" :style="s.navLinks">
-        <a href="https://github.com/nikmcfly/MiroFish-Offline" target="_blank" class="github-link" :style="s.githubLink">
-          Visit our Github <span>↗</span>
-        </a>
+      <div class="nav-brand" :style="s.navBrand">VECTOR RAY</div>
+      <div class="nav-actions">
+        <button class="settings-btn" :style="s.settingsBtn" @click="openSettings" title="Настройки">
+          ⚙️ Настройки
+        </button>
       </div>
     </nav>
 
@@ -15,21 +15,24 @@
       <section class="hero-section" :style="s.heroSection">
         <div class="hero-left" :style="s.heroLeft">
           <div class="tag-row" :style="s.tagRow">
-            <span class="orange-tag" :style="s.orangeTag">Offline Multi-Agent Simulation Engine</span>
-            <span class="version-text" :style="s.versionText">/ v0.1-preview</span>
+            <span class="orange-tag" :style="s.orangeTag">Универсальный офлайновый движок группового интеллекта</span>
+            <span class="version-text" :style="s.versionText">/ v3.0</span>
           </div>
 
           <h1 class="main-title" :style="s.mainTitle">
-            Upload Any Document<br>
-            <span class="gradient-text" :style="s.gradientText">Predict What Happens Next</span>
+            Загрузите любой документ<br>
+            <span class="gradient-text" :style="s.gradientText">спрогнозируйте будущее</span>
           </h1>
 
           <div class="hero-desc" :style="s.heroDesc">
             <p :style="s.heroDescP">
-              From a single document, <span :style="s.highlightBold">MiroFish Offline</span> extracts reality seeds and builds a parallel world of <span :style="s.highlightOrange">autonomous AI agents</span> — running entirely on your machine. Inject variables, observe emergent behavior, and find <span :style="s.highlightCode">"local optima"</span> in complex social dynamics.
+              Даже один абзац текста — <span :style="s.highlightBold">Vector Ray</span> автоматически генерирует до миллиона агентов в параллельном мире. Через <span :style="s.highlightOrange">«взгляд сверху»</span> можно искать локальные оптимумы в сложных групповых взаимодействиях.
             </p>
             <p class="slogan-text" :style="s.sloganText">
-              Your data never leaves your machine. The future is simulated locally<span :style="s.blinkingCursor">_</span>
+              Пусть будущее проиграется в агенте, чтобы решение победило после сотни испытаний<span :style="s.blinkingCursor">_</span>
+            </p>
+            <p class="slogan-text" :style="s.sloganText">
+              Ваши данные не покидают ваше устройство. Будущее моделируется локально<span :style="s.blinkingCursor">_</span>
             </p>
           </div>
 
@@ -38,7 +41,7 @@
 
         <div class="hero-right" :style="s.heroRight">
           <div class="logo-container" :style="s.logoContainer">
-            <img src="../assets/logo/MiroFish_logo_left.jpeg" alt="MiroFish Logo" :style="s.heroLogo" />
+            <img src="../assets/logo/vectorray_logo_left.png" alt="Vector Ray Logo" :style="s.heroLogo" />
           </div>
           <button :style="s.scrollDownBtn" @click="scrollToBottom">↓</button>
         </div>
@@ -49,28 +52,28 @@
         <!-- Left Column: Status & Steps -->
         <div class="left-panel" :style="s.leftPanel">
           <div class="panel-header" :style="s.panelHeader">
-            <span :style="s.statusDot">■</span> System Status
+            <span :style="s.statusDot">■</span> Статус системы
           </div>
 
-          <h2 class="section-title" :style="s.sectionTitle">Ready</h2>
+          <h2 class="section-title" :style="s.sectionTitle">Готов</h2>
           <p class="section-desc" :style="s.sectionDesc">
-            Local prediction engine on standby. Upload unstructured data to initialize a simulation.
+            Локальный движок предсказаний на готовности. Загрузите неструктурированные данные для инициализации симуляции.
           </p>
 
           <div class="metrics-row" :style="s.metricsRow">
             <div class="metric-card" :style="s.metricCard">
-              <div class="metric-value" :style="s.metricValue">Free</div>
-              <div class="metric-label" :style="s.metricLabel">Runs on your hardware</div>
+              <div class="metric-value" :style="s.metricValue">Бесплатно</div>
+              <div class="metric-label" :style="s.metricLabel">Работает на вашем железе</div>
             </div>
             <div class="metric-card" :style="s.metricCard">
-              <div class="metric-value" :style="s.metricValue">Private</div>
-              <div class="metric-label" :style="s.metricLabel">100% offline, no cloud</div>
+              <div class="metric-value" :style="s.metricValue">Приватно</div>
+              <div class="metric-label" :style="s.metricLabel">100% офлайн, без облака</div>
             </div>
           </div>
 
           <div class="steps-container" :style="s.stepsContainer">
             <div class="steps-header" :style="s.stepsHeader">
-               <span :style="s.diamondIcon">◇</span> Workflow Sequence
+               <span :style="s.diamondIcon">◇</span> Последовательность работы
             </div>
             <div :style="s.workflowList">
               <div v-for="(step, i) in steps" :key="i" :style="s.workflowItem">
@@ -89,8 +92,8 @@
           <div class="console-box" :style="s.consoleBox">
             <div :style="s.consoleSection">
               <div class="console-header" :style="s.consoleHeader">
-                <span>01 / Reality Seeds</span>
-                <span>Supported: PDF, MD, TXT</span>
+                <span>01 / Семена реальности</span>
+                <span>Поддерживаются: PDF, MD, TXT</span>
               </div>
               <div
                 :style="s.uploadZone"
@@ -99,11 +102,11 @@
                 @drop.prevent="handleDrop"
                 @click="triggerFileInput"
               >
-                <input ref="fileInput" type="file" multiple accept=".pdf,.md,.txt" @change="handleFileSelect" style="display: none" :disabled="loading" />
+                <input ref="fileInput" type="file" multiple accept=".pdf,.md,.txt" @change="handleFileSelect" style="position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer;" :disabled="loading" />
                 <div v-if="files.length === 0" :style="s.uploadPlaceholder">
                   <div :style="s.uploadIcon">↑</div>
-                  <div :style="s.uploadTitle">Drag & drop files here</div>
-                  <div :style="s.uploadHint">or click to browse</div>
+                  <div :style="s.uploadTitle">Перетащите файлы сюда</div>
+                  <div :style="s.uploadHint">или нажмите для выбора</div>
                 </div>
                 <div v-else :style="s.fileList">
                   <div v-for="(file, index) in files" :key="index" :style="s.fileItem">
@@ -115,22 +118,22 @@
               </div>
             </div>
 
-            <div :style="s.consoleDivider"><span :style="s.consoleDividerText">Parameters</span></div>
+            <div :style="s.consoleDivider"><span :style="s.consoleDividerText">Параметры</span></div>
 
             <div :style="s.consoleSection">
               <div class="console-header" :style="s.consoleHeader">
-                <span>>_ 02 / Simulation Prompt</span>
+                <span>>_ 02 / Промпт симуляции</span>
               </div>
               <div :style="s.inputWrapper">
-                <textarea v-model="formData.simulationRequirement" :style="s.codeInput" placeholder="// Describe your simulation or prediction goal in natural language" rows="6" :disabled="loading"></textarea>
-                <div :style="s.modelBadge">Engine: Ollama + Neo4j (local)</div>
+                <textarea v-model="formData.simulationRequirement" :style="s.codeInput" placeholder="// Опишите вашу симуляцию или цель предсказания на естественном языке" rows="6" :disabled="loading"></textarea>
+                <div :style="s.modelBadge">Движок: Ollama + Neo4j (локально)</div>
               </div>
             </div>
 
             <div :style="s.btnSection">
               <button :style="s.startEngineBtn" @click="startSimulation" :disabled="!canSubmit || loading">
-                <span v-if="!loading">Start Engine</span>
-                <span v-else>Initializing...</span>
+                <span v-if="!loading">Запустить движок</span>
+                <span v-else>Инициализация...</span>
                 <span>→</span>
               </button>
             </div>
@@ -154,6 +157,18 @@ const sans = 'Space Grotesk, Noto Sans SC, system-ui, sans-serif'
 const s = reactive({
   navbar: { height: '60px', background: '#000', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 40px' },
   navBrand: { fontFamily: mono, fontWeight: '800', letterSpacing: '1px', fontSize: '1.2rem' },
+  navActions: { display: 'flex', alignItems: 'center', gap: '15px' },
+  settingsBtn: {
+    background: 'transparent',
+    border: '1px solid #555',
+    color: '#fff',
+    padding: '8px 16px',
+    fontFamily: mono,
+    fontSize: '0.85rem',
+    cursor: 'pointer',
+    borderRadius: '4px',
+    transition: 'all 0.2s ease',
+  },
   navLinks: { display: 'flex', alignItems: 'center' },
   githubLink: { color: '#fff', textDecoration: 'none', fontFamily: mono, fontSize: '0.9rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px' },
   mainContent: { maxWidth: '1400px', margin: '0 auto', padding: '60px 40px' },
@@ -218,11 +233,11 @@ const s = reactive({
 })
 
 const steps = [
-  { num: '01', title: 'Graph Build', desc: 'Extract reality seeds from your document, build knowledge graph with Neo4j + GraphRAG' },
-  { num: '02', title: 'Env Setup', desc: 'Generate agent personas, configure simulation parameters via local Ollama LLM' },
-  { num: '03', title: 'Simulation', desc: 'Run multi-agent simulation locally with dynamic memory updates and emergent behavior' },
-  { num: '04', title: 'Report', desc: 'ReportAgent analyzes the simulation results and generates a detailed prediction report' },
-  { num: '05', title: 'Interaction', desc: 'Chat with any agent from the simulated world or discuss findings with ReportAgent' },
+  { num: '01', title: 'Построение графа', desc: 'Извлечение семян реальности из документа, построение графа знаний через Neo4j + GraphRAG' },
+  { num: '02', title: 'Настройка окружения', desc: 'Генерация персон агентов, настройка параметров симуляции через локальный Ollama LLM' },
+  { num: '03', title: 'Симуляция', desc: 'Запуск многоагентной симуляции локально с динамическим обновлением памяти и эмерджентным поведением' },
+  { num: '04', title: 'Отчёт', desc: 'ReportAgent анализирует результаты симуляции и генерирует детальный отчёт с предсказаниями' },
+  { num: '05', title: 'Взаимодействие', desc: 'Общайтесь с любым агентом из симулированного мира или обсуждайте находки с ReportAgent' },
 ]
 
 const router = useRouter()
@@ -239,14 +254,23 @@ const canSubmit = computed(() => {
 })
 
 const triggerFileInput = () => { if (!loading.value) fileInput.value?.click() }
-const handleFileSelect = (event) => { addFiles(Array.from(event.target.files)) }
+const handleFileSelect = (event) => { 
+  console.log('[Home] handleFileSelect called, files:', event.target.files?.length)
+  addFiles(Array.from(event.target.files)) 
+}
 const handleDragOver = (e) => { isDragOver.value = true }
 const handleDragLeave = (e) => { isDragOver.value = false }
-const handleDrop = (e) => { isDragOver.value = false; addFiles(Array.from(e.dataTransfer.files)) }
+const handleDrop = (e) => { 
+  isDragOver.value = false
+  console.log('[Home] handleDrop called, files:', e.dataTransfer.files?.length)
+  addFiles(Array.from(e.dataTransfer.files)) 
+}
 
 const addFiles = (newFiles) => {
+  console.log('[Home] addFiles called, input:', newFiles?.length)
   const allowed = ['.pdf', '.md', '.txt']
   const valid = newFiles.filter(f => allowed.some(ext => f.name.toLowerCase().endsWith(ext)))
+  console.log('[Home] valid files:', valid?.length, valid?.map(f => f.name))
   files.value = [...files.value, ...valid]
 }
 
@@ -254,12 +278,17 @@ const removeFile = (index) => { files.value.splice(index, 1) }
 
 const scrollToBottom = () => { window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }) }
 
+const openSettings = () => {
+  router.push('/settings')
+}
+
+import { setPendingUpload } from '../store/pendingUpload'
+
 const startSimulation = () => {
   if (!canSubmit.value || loading.value) return
-  import('../store/pendingUpload.js').then(({ setPendingUpload }) => {
-    setPendingUpload(files.value, formData.value.simulationRequirement)
-    router.push({ name: 'Process', params: { projectId: 'new' } })
-  })
+  console.log('[Home] Starting simulation, files:', files.value.length, 'requirement:', formData.value.simulationRequirement?.slice(0, 50))
+  setPendingUpload(files.value, formData.value.simulationRequirement)
+  router.push({ name: 'Process', params: { projectId: 'new' } })
 }
 </script>
 

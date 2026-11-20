@@ -9,95 +9,95 @@ from ..utils.llm_client import LLMClient
 
 
 # System prompt for ontology generation
-ONTOLOGY_SYSTEM_PROMPT = """You are a professional knowledge graph ontology design expert. Your task is to analyze given text content and simulation requirements, and design entity types and relationship types suitable for **social media opinion simulation**.
+ONTOLOGY_SYSTEM_PROMPT = """Вы — эксперт по проектированию онтологии графов знаний. Ваша задача — проанализировать данный текст и требования симуляции, и разработать типы сущностей и типы отношений, подходящие для **симуляции мнений в социальных медиа**.
 
-**Important: You must output valid JSON format data, do not output anything else.**
+**Важно: Вывод должен быть на русском языке в формате JSON, ничего кроме JSON не выводить.**
 
-## Core Task Background
+## Фоновая информация о задаче
 
-We are building a **social media opinion simulation system**. In this system:
-- Each entity is an "account" or "subject" that can voice, interact, and spread information on social media
-- Entities influence each other, retweet, comment, and respond
-- We need to simulate the reactions of various parties in opinion events and information dissemination paths
+Мы строим **систему симуляции мнений в социальных медиа**. В этой системе:
+- Каждая сущность — это "аккаунт" или "субъект", который может высказываться, взаимодействовать и распространять информацию в социальных медиа
+- Сущности влияют друг на друга, делают репосты, комментируют и отвечают
+- Нам нужно моделировать реакции различных сторон в событиях общественного мнения и пути распространения информации
 
-Therefore, **entities must be real-world entities that can voice and interact on social media**:
+Поэтому **сущности должны быть реальными сущностями, которые могут высказываться и взаимодействовать в социальных медиа**:
 
-**Can be**:
-- Specific individuals (public figures, stakeholders, opinion leaders, experts, ordinary people)
-- Companies and enterprises (including their official accounts)
-- Organizations (universities, associations, NGOs, unions, etc.)
-- Government departments and regulatory agencies
-- Media institutions (newspapers, TV stations, self-media, websites)
-- Social media platforms themselves
-- Specific group representatives (such as alumni associations, fan groups, rights protection groups, etc.)
+**Могут быть**:
+- Конкретные люди (общественные деятели, стейкхолдеры, лидеры мнений, эксперты, обычные люди)
+- Компании и предприятия (включая их официальные аккаунты)
+- Организации (университеты, ассоциации, НКО, профсоюзы и т.д.)
+- Государственные учреждения и регулирующие органы
+- Медиа-учреждения (газеты, телеканалы, самостоятельные медиа, сайты)
+- Сами платформы социальных медиа
+- Представители конкретных групп (например, ассоциации выпускников, фанатские группы, группы защиты прав)
 
-**Cannot be**:
-- Abstract concepts (such as "public opinion", "emotion", "trend")
-- Topics/subjects (such as "academic integrity", "education reform")
-- Views/attitudes (such as "supporters", "opponents")
+**Не могут быть**:
+- Абстрактные концепции (такие как "общественное мнение", "эмоция", "тренд")
+- Темы/предметы (такие как "академическая честность", "реформа образования")
+- Взгляды/отношения (такие как "сторонники", "противники")
 
-## Output Format
+## Формат вывода
 
-Please output JSON format with the following structure:
+Выведите JSON в следующей структуре:
 
 ```json
 {
     "entity_types": [
         {
-            "name": "Entity type name (English, PascalCase)",
-            "description": "Brief description (English, no more than 100 characters)",
+            "name": "Название типа сущности (английский, PascalCase)",
+            "description": "Краткое описание (русский, не более 100 символов)",
             "attributes": [
                 {
-                    "name": "Attribute name (English, snake_case)",
+                    "name": "Название атрибута (английский, snake_case)",
                     "type": "text",
-                    "description": "Attribute description"
+                    "description": "Описание атрибута (русский)"
                 }
             ],
-            "examples": ["Example entity 1", "Example entity 2"]
+            "examples": ["Пример сущности 1", "Пример сущности 2"]
         }
     ],
     "edge_types": [
         {
-            "name": "Relationship type name (English, UPPER_SNAKE_CASE)",
-            "description": "Brief description (English, no more than 100 characters)",
+            "name": "Название типа отношения (английский, UPPER_SNAKE_CASE)",
+            "description": "Краткое описание (русский, не более 100 символов)",
             "source_targets": [
-                {"source": "Source entity type", "target": "Target entity type"}
+                {"source": "Тип исходной сущности", "target": "Тип целевой сущности"}
             ],
             "attributes": []
         }
     ],
-    "analysis_summary": "Brief analysis and explanation of text content"
+    "analysis_summary": "Краткий анализ и объяснение содержания текста (на русском)"
 }
 ```
 
-## Design Guidelines (Extremely Important!)
+## Руководство по проектированию (Крайне важно!)
 
-### 1. Entity Type Design - Must Strictly Follow
+### 1. Проектирование типов сущностей — Строго соблюдать
 
-**Quantity requirement: Must have exactly 10 entity types**
+**Требование к количеству: Ровно 10 типов сущностей**
 
-**Hierarchical structure requirement (must include both specific types and fallback types)**:
+**Требование к иерархической структуре (должны быть конкретные типы и резервные типы)**:
 
-Your 10 entity types must include the following hierarchy:
+Ваши 10 типов сущностей должны включать следующую иерархию:
 
-A. **Fallback types (must include, place in last 2 of list)**:
-   - `Person`: Fallback type for any natural person. When a person does not fit other more specific person types, use this.
-   - `Organization`: Fallback type for any organization. When an organization does not fit other more specific organization types, use this.
+A. **Резервные типы (обязательно включить, поместить в последние 2 позиции списка)**:
+   - `Person`: Резервный тип для любого физического лица. Когда человек не подходит под другие более конкретные типы людей, используйте этот.
+   - `Organization`: Резервный тип для любой организации. Когда организация не подходит под другие более конкретные типы организаций, используйте этот.
 
-B. **Specific types (8, designed based on text content)**:
-   - Design more specific types for main characters appearing in the text
-   - Example: If text involves academic events, can have `Student`, `Professor`, `University`
-   - Example: If text involves business events, can have `Company`, `CEO`, `Employee`
+B. **Конкретные типы (8, проектируются на основе содержания текста)**:
+   - Проектируйте более конкретные типы для главных персонажей, появляющихся в тексте
+   - Пример: Если текст касается академических событий, могут быть `Student`, `Professor`, `University`
+   - Пример: Если текст касается бизнес-событий, могут быть `Company`, `CEO`, `Employee`
 
-**Why fallback types are needed**:
-- Various people will appear in the text, such as "primary/secondary teachers", "random person", "some netizen"
-- If no specific type matches, they should be classified as `Person`
-- Similarly, small organizations and temporary groups should be classified as `Organization`
+**Зачем нужны резервные типы**:
+- В тексте появятся различные люди, такие как "учителя начальных классов", "случайный человек", "некий пользователь сети"
+- Если нет подходящего конкретного типа, они должны быть классифицированы как `Person`
+- Аналогично, небольшие организации и временные группы должны быть классифицированы как `Organization`
 
-**Design principles for specific types**:
-- Identify high-frequency or key role types from the text
-- Each specific type should have clear boundaries, avoid overlap
-- Description must clearly explain the difference between this type and the fallback type
+**Принципы проектирования конкретных типов**:
+- Определите типы с высокой частотой или ключевой ролью из текста
+- Каждый конкретный тип должен иметь чёткие границы, избегать перекрытий
+- Описание должно чётко объяснять разницу между этим типом и резервным типом
 
 ### 2. Relationship Type Design
 
@@ -223,33 +223,33 @@ class OntologyGenerator:
         # If text exceeds 50,000 characters, truncate (only affects LLM input, not graph construction)
         if len(combined_text) > self.MAX_TEXT_LENGTH_FOR_LLM:
             combined_text = combined_text[:self.MAX_TEXT_LENGTH_FOR_LLM]
-            combined_text += f"\n\n...(Original text has {original_length} characters, first {self.MAX_TEXT_LENGTH_FOR_LLM} characters extracted for ontology analysis)..."
+            combined_text += f"\n\n...(Исходный текст содержит {original_length} символов, извлечено первых {self.MAX_TEXT_LENGTH_FOR_LLM} символов для анализа онтологии)..."
 
-        message = f"""## Simulation Requirements
+        message = f"""## Требования к симуляции
 
 {simulation_requirement}
 
-## Document Content
+## Содержание документа
 
 {combined_text}
 """
 
         if additional_context:
             message += f"""
-## Additional Explanation
+## Дополнительное пояснение
 
 {additional_context}
 """
 
         message += """
-Based on the above content, design entity types and relationship types suitable for social opinion simulation.
+На основе вышеуказанного содержания разработайте типы сущностей и типы отношений, подходящие для симуляции общественного мнения.
 
-**Rules to follow**:
-1. Must output exactly 10 entity types
-2. Last 2 must be fallback types: Person (individual fallback) and Organization (organization fallback)
-3. First 8 are specific types designed based on text content
-4. All entity types must be real-world subjects that can voice opinions, not abstract concepts
-5. Attribute names cannot use reserved words like name, uuid, group_id, use full_name, org_name, etc. instead
+**Правила, которые нужно соблюдать**:
+1. Должно быть ровно 10 типов сущностей
+2. Последние 2 должны быть резервными типами: Person (резерв для людей) и Organization (резерв для организаций)
+3. Первые 8 — конкретные типы, разработанные на основе содержания текста
+4. Все типы сущностей должны быть реальными субъектами, которые могут высказывать мнения, а не абстрактными концепциями
+5. Имена атрибутов не могут использовать заррезервированные слова name, uuid, group_id, используйте full_name, org_name и т.д.
 """
 
         return message
@@ -347,13 +347,13 @@ Based on the above content, design entity types and relationship types suitable 
     def generate_python_code(self, ontology: Dict[str, Any]) -> str:
         """
         [DEPRECATED] Convert ontology definition to Zep-format Pydantic code.
-        Not used in MiroFish-Offline (ontology stored as JSON in Neo4j).
+        Not used in Vector Ray-Offline (ontology stored as JSON in Neo4j).
         Kept for reference only.
         """
         code_lines = [
             '"""',
             'Custom entity type definitions',
-            'Auto-generated by MiroFish for social opinion simulation',
+            'Auto-generated by Vector Ray for social opinion simulation',
             '"""',
             '',
             'from pydantic import Field',

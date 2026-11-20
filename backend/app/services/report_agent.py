@@ -29,7 +29,7 @@ from .graph_tools import (
     InterviewResult
 )
 
-logger = get_logger('mirofish.report_agent')
+logger = get_logger('vector-ray.report_agent')
 
 
 class ReportLogger:
@@ -352,8 +352,8 @@ class ReportConsoleLogger:
 
         # Add to report_agent related loggers
         loggers_to_attach = [
-            'mirofish.report_agent',
-            'mirofish.graph_tools',
+            'vector-ray.report_agent',
+            'vector-ray.graph_tools',
         ]
 
         for logger_name in loggers_to_attach:
@@ -368,8 +368,8 @@ class ReportConsoleLogger:
 
         if self._file_handler:
             loggers_to_detach = [
-                'mirofish.report_agent',
-                'mirofish.graph_tools',
+                'vector-ray.report_agent',
+                'vector-ray.graph_tools',
             ]
 
             for logger_name in loggers_to_detach:
@@ -549,76 +549,76 @@ Function Flow:
 # ── Outline Planning Prompt ──
 
 PLAN_SYSTEM_PROMPT = """\
-You are an expert in writing "future prediction reports" with a "god's eye view" of the simulated world - you can gain insights into the behavior, statements, and interactions of every agent in the simulation.
+Вы эксперт по написанию "отчётов предсказаний будущего" с "взглядом бога" на симулированный мир — вы можете видеть поведение, заявления и взаимодействия каждого агента в симуляции.
 
-[Core Concept]
-We built a simulated world and injected specific "simulation requirements" as variables into it. The evolution result of the simulated world is a prediction of what might happen in the future. What you're observing is not "experimental data" but a "rehearsal of the future".
+[Основная концепция]
+Мы построили симулированный мир и внедрили в него конкретные "требования симуляции" как переменные. Результат эволюции симулированного мира — это предсказание того, что может произойти в будущем. То, что вы наблюдаете — это не "экспериментальные данные", а "репетиция будущего".
 
-[Your Task]
-Write a "future prediction report" that answers:
-1. What happened in the future under the conditions we set?
-2. How do various agents (groups) react and act?
-3. What future trends and risks does this simulation reveal that deserve attention?
+[Ваша задача]
+Написать "отчёт предсказаний будущего", который отвечает:
+1. Что произойдёт в будущем при заданных условиях?
+2. Как различные агенты (группы) реагируют и действуют?
+3. Какие будущие тренды и риски выявляет эта симуляция?
 
-[Report Positioning]
-- ✅ This is a future prediction report based on simulation, revealing "if this happens, how will the future unfold"
-- ✅ Focus on prediction results: event trajectories, group reactions, emergent phenomena, potential risks
-- ✅ Agent statements and behaviors in the simulated world are predictions of future human behavior
-- ❌ Not an analysis of the current state of the real world
-- ❌ Not a general overview of public sentiment
+[Позиционирование отчёта]
+- ✅ Это отчёт предсказаний будущего на основе симуляции, раскрывающий "если это произойдёт, как будет развиваться будущее"
+- ✅ Фокус на результатах предсказания: траектории событий, реакции групп, эмерджентные явления, потенциальные риски
+- ✅ Заявления и поведение агентов в симулированном мире — это предсказания будущего поведения людей
+- ❌ Это НЕ анализ текущего состояния реального мира
+- ❌ Это НЕ общий обзор общественного мнения
 
-[Section Number Limit]
-- Minimum 2 sections, maximum 5 sections
-- No subsections needed, each section directly writes complete content
-- Content should be concise, focused on core prediction findings
-- Section structure is designed independently based on prediction results
+[Ограничение количества секций]
+- Минимум 2 секции, максимум 5 секций
+- Подсекции не нужны, каждая секция содержит полный контент
+- Контент должен быть кратким, сфокусированным на ключевых предсказаниях
+- Структура секций разрабатывается независимо на основе результатов предсказания
 
-Please output the report outline in JSON format as follows:
+Выведите структуру отчёта в JSON формате:
 {
-    "title": "Report Title",
-    "summary": "Report Summary (one sentence summarizing core prediction findings)",
+    "title": "Название отчёта",
+    "summary": "Краткое описание отчёта (одно предложение, суммирующее ключевые предсказания)",
     "sections": [
         {
-            "title": "Section Title",
-            "description": "Section Content Description"
+            "title": "Название секции",
+            "description": "Описание содержания секции"
         }
     ]
 }
 
-Note: sections array must have at least 2 and at most 5 elements!"""
+Примечание: массив sections должен содержать минимум 2 и максимум 5 элементов!"""
 
 PLAN_USER_PROMPT_TEMPLATE = """\
-[Prediction Scenario Settings]
-Variable (simulation requirement) injected into the simulated world: {simulation_requirement}
+[Настройки сценария предсказания]
+Переменная (требование симуляции), внедрённая в симулированный мир: {simulation_requirement}
 
-[Simulated World Scale]
-- Number of entities participating in simulation: {total_nodes}
-- Number of relationships generated between entities: {total_edges}
-- Entity type distribution: {entity_types}
-- Number of active agents: {total_entities}
+[Масштаб симулированного мира]
+- Количество сущностей, участвующих в симуляции: {total_nodes}
+- Количество связей между сущностями: {total_edges}
+- Распределение типов сущностей: {entity_types}
+- Количество активных агентов: {total_entities}
 
-[Sample of Some Future Facts Predicted by Simulation]
+[Образцы предсказанных фактов будущего из симуляции]
 {related_facts_json}
 
-Please examine this future rehearsal from a "god's eye view":
-1. What state does the future present under the conditions we set?
-2. How do various groups (agents) react and act?
-3. What future trends does this simulation reveal that deserve attention?
+Пожалуйста, рассмотрите эту репетицию будущего с "взгляда бога":
+1. Какое состояние представляет будущее при заданных нами условиях?
+2. Как различные группы (агенты) реагируют и действуют?
+3. Какие будущие тренды выявляет эта симуляция?
 
-Based on the prediction results, design the most appropriate report section structure.
+На основе результатов предсказания разработайте наиболее подходящую структуру секций отчёта.
 
-[Reminder] Report section count: minimum 2, maximum 5, content should be concise and focused on core prediction findings."""
+[Напоминание] Количество секций отчёта: минимум 2, максимум 5, контент должен быть кратким и сфокусированным на ключевых предсказаниях."""
 
 # ── Section Generation Prompt ──
 
 SECTION_SYSTEM_PROMPT_TEMPLATE = """\
 You are an expert in writing "future prediction reports" and are writing a section of the report.
 
-Report Title: {report_title}
-Report Summary: {report_summary}
-Prediction Scenario (Simulation Requirement): {simulation_requirement}
+Название отчёта: {report_title}
+Краткое описание отчёта: {report_summary}
+Сценарий предсказания (Требование симуляции): {simulation_requirement}
 
-Current Section to Write: {section_title}
+Текущая секция для написания: {section_title}
 
 ═══════════════════════════════════════════════════════════════
 [Core Concept]
@@ -766,94 +766,94 @@ When you have gathered enough information through tools, start with "Final Answe
 7. [Emphasis Again] Don't add any titles! Use **bold** instead of section sub-titles"""
 
 SECTION_USER_PROMPT_TEMPLATE = """\
-Completed Section Content (Please Read Carefully to Avoid Duplication):
+Завершённый контент секций (внимательно прочитайте, чтобы избежать дублирования):
 {previous_content}
 
 ═══════════════════════════════════════════════════════════════
-[Current Task] Write Section: {section_title}
+[Текущая задача] Написать секцию: {section_title}
 ═══════════════════════════════════════════════════════════════
 
-[Important Reminders]
-1. Carefully read the completed sections above to avoid repeating the same content!
-2. You must call tools to get simulation data before starting
-3. Please mix different tools, don't use only one
-4. Report content must come from retrieval results, don't use your own knowledge
+[Важные напоминания]
+1. Внимательно прочитайте завершённые секции выше, чтобы избежать повторения контента!
+2. Вы должны вызвать инструменты для получения данных симуляции перед началом
+3. Пожалуйста, комбинируйте разные инструменты, не используйте только один
+4. Контент отчёта должен быть из результатов поиска, не используйте собственные знания
 
-[⚠️ Format Warning - Must Follow]
-- ❌ Don't write any titles (#, ##, ###, #### none allowed)
-- ❌ Don't write "{section_title}" as the opening
-- ✅ Section titles are added automatically by the system
-- ✅ Write the body directly, use **bold** instead of sub-section titles
+[⚠️ Предупреждение о формате — обязательно следуйте]
+- ❌ Не пишите никакие заголовки (#, ##, ###, #### — запрещены)
+- ❌ Не пишите "{section_title}" в начале
+- ✅ Заголовки секций добавляются автоматически системой
+- ✅ Пишите текст напрямую, используйте **жирный** вместо подзаголовков
 
-Please start:
-1. First think (Thought) what information this section needs
-2. Then call tools (Action) to get simulation data
-3. After collecting enough information, output Final Answer (pure body text, no titles)"""
+Начните:
+1. Сначала подумайте (Thought), какая информация нужна для этой секции
+2. Затем вызовите инструменты (Action) для получения данных симуляции
+3. После сбора достаточной информации выведите Финальный ответ (чистый текст, без заголовков)"""
 
 # ── ReACT Loop Message Templates ──
 
 REACT_OBSERVATION_TEMPLATE = """\
-Observation (Retrieval Result):
+Наблюдение (Результат поиска):
 
-═══ Tool {tool_name} Returned ═══
+═══ Инструмент {tool_name} вернул ═══
 {result}
 
 ═══════════════════════════════════════════════════════════════
-Called tools {tool_calls_count}/{max_tool_calls} times (Used: {used_tools_str}){unused_hint}
-- If information is sufficient: Start with "Final Answer:" and output section content (must quote the above original text)
-- If more information is needed: Call a tool to continue retrieving
+Вызвано инструментов: {tool_calls_count}/{max_tool_calls} (Использованы: {used_tools_str}){unused_hint}
+- Если информации достаточно: Начните с "Финальный ответ:" и выведите контент секции (обязательно цитируйте оригинальный текст выше)
+- Если нужно больше информации: Вызовите инструмент для продолжения поиска
 ═══════════════════════════════════════════════════════════════"""
 
 REACT_INSUFFICIENT_TOOLS_MSG = (
-    "[Notice] You have only called {tool_calls_count} tools, need at least {min_tool_calls}. "
-    "Please call tools again to get more simulation data, then output Final Answer. {unused_hint}"
+    "[Уведомление] Вы вызвали только {tool_calls_count} инструментов, нужно минимум {min_tool_calls}. "
+    "Пожалуйста, вызовите инструменты снова для получения данных симуляции, затем выведите Финальный ответ. {unused_hint}"
 )
 
 REACT_INSUFFICIENT_TOOLS_MSG_ALT = (
-    "Currently called {tool_calls_count} tools, need at least {min_tool_calls}. "
-    "Please call tools to get simulation data. {unused_hint}"
+    "Вызвано {tool_calls_count} инструментов, нужно минимум {min_tool_calls}. "
+    "Пожалуйста, вызовите инструменты для получения данных симуляции. {unused_hint}"
 )
 
 REACT_TOOL_LIMIT_MSG = (
-    "Tool call count has reached the limit ({tool_calls_count}/{max_tool_calls}), cannot call tools anymore. "
-    'Please immediately start with "Final Answer:" and output section content based on acquired information.'
+    "Достигнут лимит вызовов инструментов ({tool_calls_count}/{max_tool_calls}), невозможно вызвать инструменты. "
+    'Пожалуйста, немедленно начните с "Финальный ответ:" и выведите контент секции на основе полученной информации.'
 )
 
-REACT_UNUSED_TOOLS_HINT = "\n💡 You haven't used yet: {unused_list}, suggest trying different tools to get multi-perspective information"
+REACT_UNUSED_TOOLS_HINT = "\n💡 Вы ещё не использовали: {unused_list}, рекомендуется попробовать разные инструменты для получения многоперспективной информации"
 
-REACT_FORCE_FINAL_MSG = "Tool call limit reached, please directly output Final Answer: and generate section content."
+REACT_FORCE_FINAL_MSG = "Лимит вызовов инструментов достигнут, пожалуйста, напрямую выведите Финальный ответ: и сгенерируйте контент секции."
 
 # ── Chat Prompt ──
 
 CHAT_SYSTEM_PROMPT_TEMPLATE = """\
-You are a concise and efficient simulation prediction assistant.
+Вы краткий и эффективный ассистент по предсказаниям симуляции.
 
-[Background]
-Prediction Condition: {simulation_requirement}
+[Контекст]
+Условие предсказания: {simulation_requirement}
 
-[Generated Analysis Report]
+[Сгенерированный аналитический отчёт]
 {report_content}
 
-[Rules]
-1. Prioritize answering questions based on the above report content
-2. Answer questions directly, avoid lengthy deliberation
-3. Only call tools to retrieve more data if the report content is insufficient to answer
-4. Answers should be concise, clear, and well-organized
+[Правила]
+1. Приоритетно отвечайте на вопросы на основе отчёта выше
+2. Отвечайте прямо, избегайте длинных рассуждений
+3. Вызывайте инструменты для поиска данных только если отчёта недостаточно
+4. Ответы должны быть краткими, ясными и организованными
 
-[Available Tools] (use only when needed, call at most 1-2 times)
+[Доступные инструменты] (используйте только при необходимости, максимум 1-2 вызова)
 {tools_description}
 
-[Tool Call Format]
+[Формат вызова инструментов]
 <tool_call>
-{{"name": "Tool Name", "parameters": {{"parameter_name": "parameter_value"}}}}
+{{"name": "Название инструмента", "parameters": {{"параметр": "значение"}}}}
 </tool_call>
 
-[Answer Style]
-- Concise and direct, don't write lengthy passages
-- Use > format to quote key content
-- Give conclusions first, then explain reasons"""
+[Стиль ответа]
+- Кратко и прямо, не пишите длинные тексты
+- Используйте > формат для цитирования ключевого контента
+- Сначала выводы, потом объяснения"""
 
-CHAT_OBSERVATION_SUFFIX = "\n\nPlease answer the question concisely."
+CHAT_OBSERVATION_SUFFIX = "\n\nПожалуйста, ответьте на вопрос кратко."
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1213,7 +1213,7 @@ class ReportAgent:
             logger.error(f"Outline planning failed: {str(e)}")
             # Return default outline (3 sections as fallback)
             return ReportOutline(
-                title="Future Prediction Report",
+                title="Отчёт предсказаний будущего",
                 summary="Future trends and risk analysis based on simulation predictions",
                 sections=[
                     ReportSection(title="Prediction Scenario and Core Findings"),

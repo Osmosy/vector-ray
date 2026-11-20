@@ -22,7 +22,7 @@ from ..utils.logger import get_logger
 from .entity_reader import EntityNode
 from ..storage import GraphStorage
 
-logger = get_logger('mirofish.oasis_profile')
+logger = get_logger('vector-ray.oasis_profile')
 
 
 @dataclass
@@ -615,7 +615,7 @@ class OasisProfileGenerator:
     
     def _get_system_prompt(self, is_individual: bool) -> str:
         """Get system prompt"""
-        base_prompt = "You are an expert in generating social media user profiles. Generate detailed, realistic personas for opinion simulation that maximize restoration of existing reality. Must return valid JSON format with all string values containing no unescaped newlines. Use English."
+        base_prompt = "You are an expert in generating social media user profiles. Generate detailed, realistic personas for opinion simulation that maximize restoration of existing reality. Must return valid JSON format with all string values containing no unescaped newlines. Use Russian language for all content."
         return base_prompt
     
     def _build_individual_persona_prompt(
@@ -653,18 +653,18 @@ Please generate JSON containing the following fields:
    - Unique features (catchphrases, special experiences, personal interests)
    - Personal memories (important part of persona, introduce this individual's association with events and their existing actions/reactions in events)
 3. age: Age as number (must be integer)
-4. gender: Gender, must be in English: "male" or "female"
+4. gender: Gender, must be in Russian: "мужской" or "женский"
 5. mbti: MBTI type (e.g., INTJ, ENFP)
-6. country: Country (use English, e.g., "US")
-7. profession: Profession
-8. interested_topics: Array of interested topics
+6. country: Country (use Russian, e.g., "Россия")
+7. profession: Profession (in Russian)
+8. interested_topics: Array of interested topics (in Russian)
 
 Important:
 - All field values must be strings or numbers, do not use newlines
 - persona must be a coherent text description
-- Use English
+- Use Russian language for all content
 - Content must be consistent with entity information
-- age must be a valid integer, gender must be "male" or "female"
+- age must be a valid integer, gender must be "мужской" or "женской"
 """
 
     def _build_group_persona_prompt(
@@ -692,8 +692,8 @@ Context Information:
 
 Please generate JSON containing the following fields:
 
-1. bio: Official account bio, 200 characters, professional and appropriate
-2. persona: Detailed account profile description (2000 words of pure text), must include:
+1. bio: Official account bio, 200 characters, professional and appropriate (in Russian)
+2. persona: Detailed account profile description (2000 words of pure text in Russian), must include:
    - Basic institutional information (official name, organizational nature, founding background, main functions)
    - Account positioning (account type, target audience, core functions)
    - Speaking style (language characteristics, common expressions, taboo topics)
@@ -702,17 +702,17 @@ Please generate JSON containing the following fields:
    - Special notes (group profiles represented, operational habits)
    - Institutional memories (important part of institutional persona, introduce this institution's association with events and their existing actions/reactions in events)
 3. age: Fixed at 30 (virtual age of institutional account)
-4. gender: Fixed at "other" (institutional account uses other to denote non-individual)
+4. gender: Fixed at "другой" (institutional account uses "другой" to denote non-individual)
 5. mbti: MBTI type used to describe account style, e.g., ISTJ represents rigorous conservative
-6. country: Country (use English, e.g., "US")
-7. profession: Institutional function description
-8. interested_topics: Array of focus areas
+6. country: Country (use Russian, e.g., "Россия")
+7. profession: Institutional function description (in Russian)
+8. interested_topics: Array of focus areas (in Russian)
 
 Important:
 - All field values must be strings or numbers, no null values allowed
 - persona must be a coherent text description, do not use newlines
-- Use English
-- age must be integer 30, gender must be string "other"
+- Use Russian language for all content
+- age must be integer 30, gender must be string "другой"
 - Institutional account speech must match its identity positioning"""
     
     def _generate_profile_rule_based(
@@ -729,63 +729,63 @@ Important:
 
         if entity_type_lower in ["student", "alumni"]:
             return {
-                "bio": f"{entity_type} with interests in academics and social issues.",
-                "persona": f"{entity_name} is a {entity_type.lower()} who is actively engaged in academic and social discussions. They enjoy sharing perspectives and connecting with peers.",
+                "bio": f"{entity_type} с интересами к академическим и социальным вопросам.",
+                "persona": f"{entity_name} — {entity_type.lower()}, активно участвующий в академических и социальных дискуссиях. Любит делиться мнениями и общаться с коллегами.",
                 "age": random.randint(18, 30),
-                "gender": random.choice(["male", "female"]),
+                "gender": random.choice(["мужской", "женский"]),
                 "mbti": random.choice(self.MBTI_TYPES),
-                "country": random.choice(self.COUNTRIES),
-                "profession": "Student",
-                "interested_topics": ["Education", "Social Issues", "Technology"],
+                "country": "Россия",
+                "profession": "Студент",
+                "interested_topics": ["Образование", "Социальные вопросы", "Технологии"],
             }
 
         elif entity_type_lower in ["publicfigure", "expert", "faculty"]:
             return {
-                "bio": f"Expert and thought leader in their field.",
-                "persona": f"{entity_name} is a recognized {entity_type.lower()} who shares insights and opinions on important matters. They are known for their expertise and influence in public discourse.",
+                "bio": f"Эксперт и лидер мнений в своей области.",
+                "persona": f"{entity_name} — признанный {entity_type.lower()}, делится инсайтами и мнениями по важным вопросам. Известен экспертизой и влиянием на общественные дискуссии.",
                 "age": random.randint(35, 60),
-                "gender": random.choice(["male", "female"]),
+                "gender": random.choice(["мужской", "женский"]),
                 "mbti": random.choice(["ENTJ", "INTJ", "ENTP", "INTP"]),
-                "country": random.choice(self.COUNTRIES),
-                "profession": entity_attributes.get("occupation", "Expert"),
-                "interested_topics": ["Politics", "Economics", "Culture & Society"],
+                "country": "Россия",
+                "profession": entity_attributes.get("occupation", "Эксперт"),
+                "interested_topics": ["Политика", "Экономика", "Культура и общество"],
             }
 
         elif entity_type_lower in ["mediaoutlet", "socialmediaplatform"]:
             return {
-                "bio": f"Official account for {entity_name}. News and updates.",
-                "persona": f"{entity_name} is a media entity that reports news and facilitates public discourse. The account shares timely updates and engages with the audience on current events.",
+                "bio": f"Официальный аккаунт {entity_name}. Новости и обновления.",
+                "persona": f"{entity_name} — медиа-сущность, сообщающая новости и способствующая общественным дискуссиям. Аккаунт делится своевременными обновлениями и взаимодействует с аудиторией по текущим событиям.",
                 "age": 30,  # Institutional virtual age
-                "gender": "other",  # Institutional uses other
+                "gender": "другой",  # Institutional uses other
                 "mbti": "ISTJ",  # Institutional style: rigorous conservative
-                "country": "US",
-                "profession": "Media",
-                "interested_topics": ["General News", "Current Events", "Public Affairs"],
+                "country": "Россия",
+                "profession": "Медиа",
+                "interested_topics": ["Общие новости", "Текущие события", "Общественные дела"],
             }
 
         elif entity_type_lower in ["university", "governmentagency", "ngo", "organization"]:
             return {
-                "bio": f"Official account of {entity_name}.",
-                "persona": f"{entity_name} is an institutional entity that communicates official positions, announcements, and engages with stakeholders on relevant matters.",
+                "bio": f"Официальный аккаунт {entity_name}.",
+                "persona": f"{entity_name} — институциональная сущность, коммуницирующая официальные позиции, объявления и взаимодействующая со стейкхолдерами по релевантным вопросам.",
                 "age": 30,  # Institutional virtual age
-                "gender": "other",  # Institutional uses other
+                "gender": "другой",  # Institutional uses other
                 "mbti": "ISTJ",  # Institutional style: rigorous conservative
-                "country": "US",
+                "country": "Россия",
                 "profession": entity_type,
-                "interested_topics": ["Public Policy", "Community", "Official Announcements"],
+                "interested_topics": ["Государственная политика", "Сообщество", "Официальные объявления"],
             }
 
         else:
-            # Default persona
+            # Default persona (Russian)
             return {
                 "bio": entity_summary[:150] if entity_summary else f"{entity_type}: {entity_name}",
-                "persona": entity_summary or f"{entity_name} is a {entity_type.lower()} participating in social discussions.",
+                "persona": entity_summary or f"{entity_name} — {entity_type.lower()}, участвующий в социальных дискуссиях.",
                 "age": random.randint(25, 50),
-                "gender": random.choice(["male", "female"]),
+                "gender": random.choice(["мужской", "женский"]),
                 "mbti": random.choice(self.MBTI_TYPES),
-                "country": random.choice(self.COUNTRIES),
+                "country": "Россия",
                 "profession": entity_type,
-                "interested_topics": ["General", "Social Issues"],
+                "interested_topics": ["Общее", "Социальные вопросы"],
             }
     
     def set_graph_id(self, graph_id: str):

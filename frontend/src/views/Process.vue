@@ -2,12 +2,12 @@
   <div class="process-page">
     <!-- Top navigation bar -->
     <nav class="navbar">
-      <div class="nav-brand" @click="goHome">MIROFISH OFFLINE</div>
+      <div class="nav-brand" @click="goHome">VECTOR RAY</div>
       
       <!-- Center step indicator -->
       <div class="nav-center">
-        <div class="step-badge">STEP 01</div>
-        <div class="step-name">Graph Build</div>
+        <div class="step-badge">ШАГ 01</div>
+        <div class="step-name">Построение графа</div>
       </div>
 
       <div class="nav-status">
@@ -23,20 +23,20 @@
         <div class="panel-header">
           <div class="header-left">
             <span class="header-deco">◆</span>
-            <span class="header-title">Live Knowledge Graph</span>
+            <span class="header-title">Граф знаний в реальном времени</span>
           </div>
           <div class="header-right">
             <template v-if="graphData">
-              <span class="stat-item">{{ graphData.node_count || graphData.nodes?.length || 0 }} Nodes</span>
+              <span class="stat-item">{{ graphData.node_count || graphData.nodes?.length || 0 }} Узлов</span>
               <span class="stat-divider">|</span>
-              <span class="stat-item">{{ graphData.edge_count || graphData.edges?.length || 0 }} Edges</span>
+              <span class="stat-item">{{ graphData.edge_count || graphData.edges?.length || 0 }} Связей</span>
               <span class="stat-divider">|</span>
             </template>
             <div class="action-buttons">
-                <button class="action-btn" @click="refreshGraph" :disabled="graphLoading" title="Refresh Graph">
+                <button class="action-btn" @click="refreshGraph" :disabled="graphLoading" title="Обновить граф">
                   <span class="icon-refresh" :class="{ 'spinning': graphLoading }">↻</span>
                 </button>
-                <button class="action-btn" @click="toggleFullScreen" :title="isFullScreen ? 'Exit Fullscreen' : 'Fullscreen'">
+                <button class="action-btn" @click="toggleFullScreen" :title="isFullScreen ? 'Выйти из полного экрана' : 'Полный экран'">
                   <span class="icon-fullscreen">{{ isFullScreen ? '↙' : '↗' }}</span>
                 </button>
             </div>
@@ -50,13 +50,13 @@
             <!-- Building in progress hint -->
             <div v-if="currentPhase === 1" class="graph-building-hint">
               <span class="building-dot"></span>
-              Real-time update in progress...
+              Обновление в реальном времени...
             </div>
             
             <!-- Node/Edge detail panel -->
             <div v-if="selectedItem" class="detail-panel">
               <div class="detail-panel-header">
-                <span class="detail-title">{{ selectedItem.type === 'node' ? 'Node Details' : 'Relationship' }}</span>
+                <span class="detail-title">{{ selectedItem.type === 'node' ? 'Детали узла' : 'Связь' }}</span>
                 <span v-if="selectedItem.type === 'node'" class="detail-badge" :style="{ background: selectedItem.color }">
                   {{ selectedItem.entityType }}
                 </span>
@@ -66,7 +66,7 @@
               <!-- Node details -->
               <div v-if="selectedItem.type === 'node'" class="detail-content">
                 <div class="detail-row">
-                  <span class="detail-label">Name:</span>
+                  <span class="detail-label">Имя:</span>
                   <span class="detail-value highlight">{{ selectedItem.data.name }}</span>
                 </div>
                 <div class="detail-row">
@@ -74,13 +74,13 @@
                   <span class="detail-value uuid">{{ selectedItem.data.uuid }}</span>
                 </div>
                 <div class="detail-row" v-if="selectedItem.data.created_at">
-                  <span class="detail-label">Created:</span>
+                  <span class="detail-label">Создано:</span>
                   <span class="detail-value">{{ formatDate(selectedItem.data.created_at) }}</span>
                 </div>
                 
                 <!-- Properties / Attributes -->
                 <div class="detail-section" v-if="selectedItem.data.attributes && Object.keys(selectedItem.data.attributes).length > 0">
-                  <span class="detail-label">Properties:</span>
+                  <span class="detail-label">Свойства:</span>
                   <div class="properties-list">
                     <div v-for="(value, key) in selectedItem.data.attributes" :key="key" class="property-item">
                       <span class="property-key">{{ key }}:</span>
@@ -91,13 +91,13 @@
                 
                 <!-- Summary -->
                 <div class="detail-section" v-if="selectedItem.data.summary">
-                  <span class="detail-label">Summary:</span>
+                  <span class="detail-label">Описание:</span>
                   <p class="detail-summary">{{ selectedItem.data.summary }}</p>
                 </div>
                 
                 <!-- Labels -->
                 <div class="detail-row" v-if="selectedItem.data.labels?.length">
-                  <span class="detail-label">Labels:</span>
+                  <span class="detail-label">Метки:</span>
                   <div class="detail-labels">
                     <span v-for="label in selectedItem.data.labels" :key="label" class="label-tag">{{ label }}</span>
                   </div>
@@ -115,49 +115,49 @@
                   <span class="edge-target">{{ selectedItem.data.target_name || selectedItem.data.target_node_name }}</span>
                 </div>
                 
-                <div class="detail-subtitle">Relationship</div>
+                <div class="detail-subtitle">Связь</div>
                 
                 <div class="detail-row">
                   <span class="detail-label">UUID:</span>
                   <span class="detail-value uuid">{{ selectedItem.data.uuid }}</span>
                 </div>
                 <div class="detail-row">
-                  <span class="detail-label">Label:</span>
+                  <span class="detail-label">Метка:</span>
                   <span class="detail-value">{{ selectedItem.data.name || selectedItem.data.fact_type || 'RELATED_TO' }}</span>
                 </div>
                 <div class="detail-row" v-if="selectedItem.data.fact_type">
-                  <span class="detail-label">Type:</span>
+                  <span class="detail-label">Тип:</span>
                   <span class="detail-value">{{ selectedItem.data.fact_type }}</span>
                 </div>
                 
                 <!-- Fact -->
                 <div class="detail-section" v-if="selectedItem.data.fact">
-                  <span class="detail-label">Fact:</span>
+                  <span class="detail-label">Факт:</span>
                   <p class="detail-summary">{{ selectedItem.data.fact }}</p>
                 </div>
                 
                 <!-- Episodes -->
                 <div class="detail-section" v-if="selectedItem.data.episodes?.length">
-                  <span class="detail-label">Episodes:</span>
+                  <span class="detail-label">Эпизоды:</span>
                   <div class="episodes-list">
                     <span v-for="ep in selectedItem.data.episodes" :key="ep" class="episode-tag">{{ ep }}</span>
                   </div>
                 </div>
                 
                 <div class="detail-row" v-if="selectedItem.data.created_at">
-                  <span class="detail-label">Created:</span>
+                  <span class="detail-label">Создано:</span>
                   <span class="detail-value">{{ formatDate(selectedItem.data.created_at) }}</span>
                 </div>
                 <div class="detail-row" v-if="selectedItem.data.valid_at">
-                  <span class="detail-label">Valid From:</span>
+                  <span class="detail-label">Действует с:</span>
                   <span class="detail-value">{{ formatDate(selectedItem.data.valid_at) }}</span>
                 </div>
                 <div class="detail-row" v-if="selectedItem.data.invalid_at">
-                  <span class="detail-label">Invalid At:</span>
+                  <span class="detail-label">Недействительно с:</span>
                   <span class="detail-value">{{ formatDate(selectedItem.data.invalid_at) }}</span>
                 </div>
                 <div class="detail-row" v-if="selectedItem.data.expired_at">
-                  <span class="detail-label">Expired At:</span>
+                  <span class="detail-label">Истекает:</span>
                   <span class="detail-value">{{ formatDate(selectedItem.data.expired_at) }}</span>
                 </div>
               </div>
@@ -171,7 +171,7 @@
               <div class="loading-ring"></div>
               <div class="loading-ring"></div>
             </div>
-            <p class="loading-text">Loading graph data...</p>
+            <p class="loading-text">Загрузка данных графа...</p>
           </div>
           
           <!-- Waiting for build -->
@@ -189,8 +189,8 @@
                 <line x1="50" y1="72" x2="74" y2="66" stroke="#000" stroke-width="1"/>
               </svg>
             </div>
-            <p class="waiting-text">Waiting for ontology generation</p>
-            <p class="waiting-hint">Graph construction will start automatically after generation completes</p>
+            <p class="waiting-text">Ожидание генерации онтологии</p>
+            <p class="waiting-hint">Построение графа начнётся автоматически после завершения генерации</p>
           </div>
           
           <!-- Building in progress without data -->
@@ -200,8 +200,8 @@
               <div class="loading-ring"></div>
               <div class="loading-ring"></div>
             </div>
-            <p class="waiting-text">Building graph</p>
-            <p class="waiting-hint">Data will be displayed soon...</p>
+            <p class="waiting-text">Построение графа</p>
+            <p class="waiting-hint">Данные скоро появятся...</p>
           </div>
           
           <!-- Error state -->
@@ -215,7 +215,7 @@
         <div v-if="graphData" class="graph-legend">
           <div class="legend-item" v-for="type in entityTypes" :key="type.name">
             <span class="legend-dot" :style="{ background: type.color }"></span>
-            <span class="legend-label">{{ type.name }}</span>
+            <span class="legend-label" :title="type.name">{{ translateEntity(type.name) }}</span>
             <span class="legend-count">{{ type.count }}</span>
           </div>
         </div>
@@ -225,7 +225,7 @@
       <div class="right-panel" :class="{ 'hidden': isFullScreen }">
         <div class="panel-header dark-header">
           <span class="header-icon">▣</span>
-          <span class="header-title">Build Process</span>
+          <span class="header-title">Процесс построения</span>
         </div>
 
         <div class="process-content">
@@ -234,7 +234,7 @@
             <div class="phase-header">
               <span class="phase-num">01</span>
               <div class="phase-info">
-                <div class="phase-title">Ontology Generation</div>
+                <div class="phase-title">Генерация онтологии</div>
                 <div class="phase-api">/api/graph/ontology/generate</div>
               </div>
               <span class="phase-status" :class="getPhaseStatusClass(0)">
@@ -244,15 +244,15 @@
             
             <div class="phase-detail">
               <div class="detail-section">
-                <div class="detail-label">Description</div>
+                <div class="detail-label">Описание</div>
                 <div class="detail-content">
-                  After uploading documents, LLM analyzes the content and automatically generates an ontology structure suitable for knowledge graph simulation (entity types + relationship types)
+                  После загрузки документов LLM анализирует содержимое и автоматически генерирует структуру онтологии для симуляции графа знаний (типы сущностей + типы связей)
                 </div>
               </div>
               
               <!-- Ontology generation progress -->
               <div class="detail-section" v-if="ontologyProgress && currentPhase === 0">
-                <div class="detail-label">Generation Progress</div>
+                <div class="detail-label">Прогресс генерации</div>
                 <div class="ontology-progress">
                   <div class="progress-spinner"></div>
                   <span class="progress-text">{{ ontologyProgress.message }}</span>
@@ -261,20 +261,21 @@
               
               <!-- Generated ontology information -->
               <div class="detail-section" v-if="projectData?.ontology">
-                <div class="detail-label">Generated Entity Types ({{ projectData.ontology.entity_types?.length || 0 }})</div>
+                <div class="detail-label">Сгенерированные типы сущностей ({{ projectData.ontology.entity_types?.length || 0 }})</div>
                 <div class="entity-tags">
                   <span 
                     v-for="entity in projectData.ontology.entity_types" 
                     :key="entity.name"
                     class="entity-tag"
+                    :title="entity.description"
                   >
-                    {{ entity.name }}
+                    {{ entity.description || translateEntity(entity.name) }}
                   </span>
                 </div>
               </div>
               
               <div class="detail-section" v-if="projectData?.ontology">
-                <div class="detail-label">Generated Relationship Types ({{ projectData.ontology.relation_types?.length || 0 }})</div>
+                <div class="detail-label">Сгенерированные типы связей ({{ projectData.ontology.relation_types?.length || 0 }})</div>
                 <div class="relation-list">
                   <div 
                     v-for="(rel, idx) in projectData.ontology.relation_types?.slice(0, 5) || []" 
@@ -283,19 +284,19 @@
                   >
                     <span class="rel-source">{{ rel.source_type }}</span>
                     <span class="rel-arrow">→</span>
-                    <span class="rel-name">{{ rel.name }}</span>
+                    <span class="rel-name" :title="rel.description || rel.name">{{ rel.description || translateRelation(rel.name) }}</span>
                     <span class="rel-arrow">→</span>
                     <span class="rel-target">{{ rel.target_type }}</span>
                   </div>
                   <div v-if="(projectData.ontology.relation_types?.length || 0) > 5" class="relation-more">
-                    +{{ projectData.ontology.relation_types.length - 5 }} more relationships...
+                    +{{ projectData.ontology.relation_types.length - 5 }} ещё связей...
                   </div>
                 </div>
               </div>
               
               <!-- Waiting state -->
               <div class="detail-section waiting-state" v-if="!projectData?.ontology && currentPhase === 0 && !ontologyProgress">
-                <div class="waiting-hint">Waiting for ontology generation...</div>
+                <div class="waiting-hint">Ожидание генерации онтологии...</div>
               </div>
             </div>
           </div>
@@ -305,7 +306,7 @@
             <div class="phase-header">
               <span class="phase-num">02</span>
               <div class="phase-info">
-                <div class="phase-title">Graph Build</div>
+                <div class="phase-title">Построение графа</div>
                 <div class="phase-api">/api/graph/build</div>
               </div>
               <span class="phase-status" :class="getPhaseStatusClass(1)">
@@ -315,20 +316,20 @@
             
             <div class="phase-detail">
               <div class="detail-section">
-                <div class="detail-label">Description</div>
+                <div class="detail-label">Описание</div>
                 <div class="detail-content">
-                  Based on the generated ontology, the documents are chunked and the Neo4j API is called to build the knowledge graph, extracting entities and relationships
+                  На основе сгенерированной онтологии документы разбиваются на чанки и вызывается Neo4j API для построения графа знаний, извлечения сущностей и связей
                 </div>
               </div>
               
               <!-- Waiting for ontology completion -->
               <div class="detail-section waiting-state" v-if="currentPhase < 1">
-                <div class="waiting-hint">Waiting for ontology generation to complete...</div>
+                <div class="waiting-hint">Ожидание завершения генерации онтологии...</div>
               </div>
               
               <!-- Build progress -->
               <div class="detail-section" v-if="buildProgress && currentPhase >= 1">
-                <div class="detail-label">Build Progress</div>
+                <div class="detail-label">Прогресс построения</div>
                 <div class="progress-bar">
                   <div class="progress-fill" :style="{ width: buildProgress.progress + '%' }"></div>
                 </div>
@@ -339,19 +340,19 @@
               </div>
               
               <div class="detail-section" v-if="graphData">
-                <div class="detail-label">Build Result</div>
+                <div class="detail-label">Результат построения</div>
                 <div class="build-result">
                   <div class="result-item">
                     <span class="result-value">{{ graphData.node_count }}</span>
-                    <span class="result-label">Entity Nodes</span>
+                    <span class="result-label">Узлы сущностей</span>
                   </div>
                   <div class="result-item">
                     <span class="result-value">{{ graphData.edge_count }}</span>
-                    <span class="result-label">Relationship Edges</span>
+                    <span class="result-label">Рёбра связей</span>
                   </div>
                   <div class="result-item">
                     <span class="result-value">{{ entityTypes.length }}</span>
-                    <span class="result-label">Entity Types</span>
+                    <span class="result-label">Типы сущностей</span>
                   </div>
                 </div>
               </div>
@@ -363,8 +364,8 @@
             <div class="phase-header">
               <span class="phase-num">03</span>
               <div class="phase-info">
-                <div class="phase-title">Build Complete</div>
-                <div class="phase-api">Ready for next step</div>
+                <div class="phase-title">Построение завершено</div>
+                <div class="phase-api">Готово к следующему шагу</div>
               </div>
               <span class="phase-status" :class="getPhaseStatusClass(2)">
                 {{ getPhaseStatusText(2) }}
@@ -375,7 +376,7 @@
           <!-- Next step button -->
           <div class="next-step-section" v-if="currentPhase >= 2">
             <button class="next-step-btn" @click="goToNextStep" :disabled="currentPhase < 2">
-              Enter Environment Setup
+              Перейти к настройке окружения
               <span class="btn-arrow">→</span>
             </button>
           </div>
@@ -385,23 +386,23 @@
         <div class="project-panel">
           <div class="project-header">
             <span class="project-icon">◇</span>
-            <span class="project-title">Project Information</span>
+            <span class="project-title">Информация о проекте</span>
           </div>
           <div class="project-details" v-if="projectData">
             <div class="project-item">
-              <span class="item-label">Project Name</span>
+              <span class="item-label">Название проекта</span>
               <span class="item-value">{{ projectData.name }}</span>
             </div>
             <div class="project-item">
-              <span class="item-label">Project ID</span>
+              <span class="item-label">ID проекта</span>
               <span class="item-value code">{{ projectData.project_id }}</span>
             </div>
             <div class="project-item" v-if="projectData.graph_id">
-              <span class="item-label">Graph ID</span>
+              <span class="item-label">ID графа</span>
               <span class="item-value code">{{ projectData.graph_id }}</span>
             </div>
             <div class="project-item">
-              <span class="item-label">Simulation Requirement</span>
+              <span class="item-label">Требование симуляции</span>
               <span class="item-value">{{ projectData.simulation_requirement || '-' }}</span>
             </div>
           </div>
@@ -498,12 +499,52 @@ const closeDetailPanel = () => {
   selectedItem.value = null
 }
 
+// Переводы типов сущностей
+const entityTranslations = {
+  'Consumer': 'Потребитель',
+  'Manufacturer': 'Производитель',
+  'Analyst': 'Аналитик',
+  'RetailChain': 'Розничная сеть',
+  'HealthAdvocate': 'Адвокат здоровья',
+  'MediaOutlet': 'СМИ',
+  'GovernmentAgency': 'Госучреждение',
+  'BrandStore': 'Бренд-магазин',
+  'Person': 'Человек',
+  'Organization': 'Организация',
+  'Company': 'Компания',
+  'Product': 'Продукт',
+  'Event': 'Событие',
+  'Location': 'Локация',
+  'Technology': 'Технология',
+}
+
+// Переводы типов связей
+const relationTranslations = {
+  'WORKS_FOR': 'Работает в',
+  'PURCHASES_FROM': 'Покупает у',
+  'REPORTS_ON': 'Отчёт о',
+  'ADVOCATES_AGAINST': 'Выступает против',
+  'REGULATES': 'Регулирует',
+  'OWNS': 'Владеет',
+  'SUPPLIES_TO': 'Поставляет',
+  'COMPETES_WITH': 'Конкурирует с',
+  'PREFERS': 'Предпочитает',
+  'CRITICIZES': 'Критикует',
+  'RELATED_TO': 'Связан с',
+  'PART_OF': 'Часть',
+  'LOCATED_IN': 'Находится в',
+}
+
+// Функция перевода
+const translateEntity = (name) => entityTranslations[name] || name
+const translateRelation = (name) => relationTranslations[name] || name
+
 // Format date
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
   try {
     const date = new Date(dateStr)
-    return date.toLocaleString('zh-CN', {
+    return date.toLocaleString('ru-RU', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -540,14 +581,14 @@ const getPhaseStatusClass = (phase) => {
 }
 
 const getPhaseStatusText = (phase) => {
-  if (currentPhase.value > phase) return 'Completed'
+  if (currentPhase.value > phase) return 'Завершено'
   if (currentPhase.value === phase) {
     if (phase === 1 && buildProgress.value) {
       return `${buildProgress.value.progress}%`
     }
-    return 'In Progress'
+    return 'В процессе'
   }
-  return 'Waiting'
+  return 'Ожидание'
 }
 
 // Initialize - handle new or existing project
@@ -566,9 +607,12 @@ const initProject = async () => {
 
 // Handle new project - call ontology/generate API
 const handleNewProject = async () => {
+  console.log('[Process] handleNewProject called')
   const pending = getPendingUpload()
+  console.log('[Process] Pending data:', { isPending: pending.isPending, filesCount: pending.files?.length, requirement: pending.simulationRequirement?.slice(0, 50) })
 
   if (!pending.isPending || pending.files.length === 0) {
+    console.error('[Process] No pending upload data')
     error.value = 'No files pending upload. Please go back to home and try again.'
     loading.value = false
     return
@@ -577,17 +621,20 @@ const handleNewProject = async () => {
   try {
     loading.value = true
     currentPhase.value = 0 // Ontology generation phase
-    ontologyProgress.value = { message: 'Uploading files and analyzing documents...' }
+    ontologyProgress.value = { message: 'Загрузка файлов и анализ документов...' }
 
     // Build FormData
     const formDataObj = new FormData()
-    pending.files.forEach(file => {
+    pending.files.forEach((file, idx) => {
+      console.log(`[Process] Appending file ${idx}:`, file.name, file.type, file.size)
       formDataObj.append('files', file)
     })
     formDataObj.append('simulation_requirement', pending.simulationRequirement)
+    console.log('[Process] FormData prepared, calling generateOntology API')
 
     // Call ontology generation API
     const response = await generateOntology(formDataObj)
+    console.log('[Process] API response:', response)
 
     if (response.success) {
       // Clear pending upload data
@@ -668,7 +715,7 @@ const updatePhaseByStatus = (status) => {
       currentPhase.value = 2
       break
     case 'failed':
-      error.value = projectData.value?.error || 'Processing failed'
+      error.value = projectData.value?.error || 'Ошибка обработки'
       break
   }
 }
@@ -791,7 +838,7 @@ const pollTaskStatus = async (taskId) => {
       // Update progress display
       buildProgress.value = {
         progress: task.progress || 0,
-        message: task.message || 'Processing...'
+        message: task.message || 'Обработка...'
       }
 
       console.log('Task status:', task.status, 'Progress:', task.progress)
@@ -905,7 +952,7 @@ const renderGraph = () => {
       .attr('y', height / 2)
       .attr('text-anchor', 'middle')
       .attr('fill', '#999')
-      .text('Waiting for graph data...')
+      .text('Ожидание данных графа...')
     return
   }
 

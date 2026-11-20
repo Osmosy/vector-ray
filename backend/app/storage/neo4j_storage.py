@@ -1,8 +1,8 @@
 """
-Neo4jStorage — Neo4j Community Edition implementation of GraphStorage.
+Neo4jStorage — Реализация GraphStorage на базе Neo4j Community Edition.
 
-Replaces all Zep Cloud API calls with local Neo4j Cypher queries.
-Includes: CRUD, NER/RE-based text ingestion, hybrid search, retry logic.
+Заменяет все вызовы Zep Cloud API на локальные Cypher-запросы Neo4j.
+Включает: CRUD, NER/RE-обработку текста, гибридный поиск, логику повторных попыток.
 """
 
 import json
@@ -26,14 +26,14 @@ from .ner_extractor import NERExtractor
 from .search_service import SearchService
 from . import neo4j_schema
 
-logger = logging.getLogger('mirofish.neo4j_storage')
+logger = logging.getLogger('vector-ray.neo4j_storage')
 
 
 class Neo4jStorage(GraphStorage):
-    """Neo4j CE implementation of the GraphStorage interface."""
+    """Реализация интерфейса GraphStorage на базе Neo4j CE."""
 
     MAX_RETRIES = 3
-    RETRY_DELAY_BASE = 1  # seconds
+    RETRY_DELAY_BASE = 1  # секунды
 
     def __init__(
         self,
@@ -54,30 +54,30 @@ class Neo4jStorage(GraphStorage):
         self._ner = ner_extractor or NERExtractor()
         self._search = SearchService(self._embedding)
 
-        # Initialize schema (indexes, constraints)
+        # Инициализировать схему (индексы, ограничения)
         self._ensure_schema()
 
     def close(self):
-        """Close the Neo4j driver connection."""
+        """Закрыть соединение с драйвером Neo4j."""
         self._driver.close()
 
     def _ensure_schema(self):
-        """Create indexes and constraints if they don't exist."""
+        """Создать индексы и ограничения, если они не существуют."""
         with self._driver.session() as session:
             for query in neo4j_schema.ALL_SCHEMA_QUERIES:
                 try:
                     session.run(query)
                 except Exception as e:
-                    logger.warning(f"Schema query warning (may already exist): {e}")
+                    logger.warning(f"Предупреждение схемы (возможно уже существует): {e}")
 
     # ----------------------------------------------------------------
-    # Retry wrapper
+    # Обёртка для повторных попыток
     # ----------------------------------------------------------------
 
     def _call_with_retry(self, func, *args, **kwargs):
         """
-        Execute a function with retry on Neo4j transient errors.
-        Replaces 3 different retry patterns from the Zep codebase.
+        Выполнить функцию с повторными попытками при временных ошибках Neo4j.
+        Заменяет 3 различных патлона повторов из кодовой базы Zep.
         """
         last_error = None
         for attempt in range(self.MAX_RETRIES):

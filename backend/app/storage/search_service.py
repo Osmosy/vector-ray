@@ -1,8 +1,8 @@
 """
-SearchService — hybrid search (vector + keyword) over Neo4j graph data.
+SearchService — гибридный поиск (векторный + ключевой) по данным графа Neo4j.
 
-Replaces Zep Cloud's built-in search with reranker.
-Scoring: 0.7 * vector_score + 0.3 * keyword_score (BM25 via fulltext index).
+Заменяет встроенный поиск Zep Cloud с реранкером.
+Скоринг: 0.7 * vector_score + 0.3 * keyword_score (BM25 через fulltext индекс).
 """
 
 import logging
@@ -12,9 +12,9 @@ from neo4j import Session as Neo4jSession
 
 from .embedding_service import EmbeddingService
 
-logger = logging.getLogger('mirofish.search')
+logger = logging.getLogger('vector-ray.search')
 
-# Cypher for vector search on edges (facts)
+# Cypher для векторного поиска по рёбрам (фактам)
 _VECTOR_SEARCH_EDGES = """
 CALL db.index.vector.queryRelationships('fact_embedding', $limit, $query_vector)
 YIELD relationship, score
@@ -24,7 +24,7 @@ ORDER BY score DESC
 LIMIT $limit
 """
 
-# Cypher for vector search on nodes (entities)
+# Cypher для векторного поиска по узлам (сущностям)
 _VECTOR_SEARCH_NODES = """
 CALL db.index.vector.queryNodes('entity_embedding', $limit, $query_vector)
 YIELD node, score
@@ -34,7 +34,7 @@ ORDER BY score DESC
 LIMIT $limit
 """
 
-# Cypher for fulltext (BM25) search on edges
+# Cypher для полнотекстового (BM25) поиска по рёбрам
 _FULLTEXT_SEARCH_EDGES = """
 CALL db.index.fulltext.queryRelationships('fact_fulltext', $query_text)
 YIELD relationship, score
@@ -44,7 +44,7 @@ ORDER BY score DESC
 LIMIT $limit
 """
 
-# Cypher for fulltext search on nodes
+# Cypher для полнотекстового поиска по узлам
 _FULLTEXT_SEARCH_NODES = """
 CALL db.index.fulltext.queryNodes('entity_fulltext', $query_text)
 YIELD node, score

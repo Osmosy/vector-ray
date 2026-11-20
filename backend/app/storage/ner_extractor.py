@@ -1,9 +1,9 @@
 """
-NER/RE Extractor — entity and relation extraction via local LLM
+NER/RE Extractor — извлечение сущностей и отношений через локальный LLM
 
-Replaces Zep Cloud's built-in NER/RE pipeline.
-Uses LLMClient.chat_json() with a structured prompt to extract
-entities and relations from text chunks, guided by the graph's ontology.
+Заменяет встроенный NER/RE пайплайн Zep Cloud.
+Использует LLMClient.chat_json() со структурированным промптом для извлечения
+сущностей и отношений из чанков текста, руководствуясь онтологией графа.
 """
 
 import logging
@@ -11,24 +11,24 @@ from typing import Dict, Any, List, Optional
 
 from ..utils.llm_client import LLMClient
 
-logger = logging.getLogger('mirofish.ner_extractor')
+logger = logging.getLogger('vector-ray.ner_extractor')
 
-# System prompt template for NER/RE extraction
-_SYSTEM_PROMPT = """You are a Named Entity Recognition and Relation Extraction system.
-Given a text and an ontology (entity types + relation types), extract all entities and relations.
+# Шаблон системного промпта для извлечения NER/RE
+_SYSTEM_PROMPT = """Ты — система распознавания именованных сущностей и извлечения отношений.
+Дан текст и онтология (типы сущностей + типы отношений), извлеки все сущности и отношения.
 
-ONTOLOGY:
+ОНТОЛОГИЯ:
 {ontology_description}
 
-RULES:
-1. Only extract entity types and relation types defined in the ontology.
-2. Normalize entity names: strip whitespace, use canonical form (e.g., "Jack Ma" not "ma jack").
-3. Each entity must have: name, type (from ontology), and optional attributes.
-4. Each relation must have: source entity name, target entity name, type (from ontology), and a fact sentence describing the relationship.
-5. If no entities or relations are found, return empty lists.
-6. Be precise — only extract what is explicitly stated or strongly implied in the text.
+ПРАВИЛА:
+1. Извлекай только типы сущностей и отношений, определённые в онтологии.
+2. Нормализуй имена сущностей: убери пробелы, используй каноническую форму (например, "Jack Ma", а не "ma jack").
+3. Каждая сущность должна иметь: name, type (из онтологии) и необязательные attributes.
+4. Каждое отношение должно иметь: source entity name, target entity name, type (из онтологии) и предложение fact, описывающее связь.
+5. Если сущности или отношения не найдены, верни пустые списки.
+6. Будь точен — извлекай только то, что явно указано или сильно подразумевается в тексте.
 
-Return ONLY valid JSON in this exact format:
+Верни ТОЛЬКО валидный JSON в точном формате:
 {{
   "entities": [
     {{"name": "...", "type": "...", "attributes": {{"key": "value"}}}}
@@ -38,13 +38,13 @@ Return ONLY valid JSON in this exact format:
   ]
 }}"""
 
-_USER_PROMPT = """Extract entities and relations from the following text:
+_USER_PROMPT = """Извлеки сущности и отношения из следующего текста:
 
 {text}"""
 
 
 class NERExtractor:
-    """Extract entities and relations from text using local LLM."""
+    """Извлечение сущностей и отношений из текста с помощью локального LLM."""
 
     def __init__(self, llm_client: Optional[LLMClient] = None, max_retries: int = 2):
         self.llm = llm_client or LLMClient()

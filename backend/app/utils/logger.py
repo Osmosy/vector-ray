@@ -1,6 +1,6 @@
 """
-Logger Configuration Module
-Provides unified logging management with output to both console and file
+Модуль конфигурации логирования
+Предоставляет унифицированное управление логами с выводом в консоль и файл
 """
 
 import os
@@ -12,40 +12,40 @@ from logging.handlers import RotatingFileHandler
 
 def _ensure_utf8_stdout():
     """
-    Ensure stdout/stderr use UTF-8 encoding
-    Solves Windows console Chinese character encoding issue
+    Обеспечить использование UTF-8 кодировки для stdout/stderr
+    Решает проблему с кодировкой китайских символов в консоли Windows
     """
     if sys.platform == 'win32':
-        # Reconfigure standard output to UTF-8 on Windows
+        # Переконфигурировать стандартный вывод на UTF-8 в Windows
         if hasattr(sys.stdout, 'reconfigure'):
             sys.stdout.reconfigure(encoding='utf-8', errors='replace')
         if hasattr(sys.stderr, 'reconfigure'):
             sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
 
-# Log directory
+# Директория для логов
 LOG_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'logs')
 
 
-def setup_logger(name: str = 'mirofish', level: int = logging.DEBUG) -> logging.Logger:
+def setup_logger(name: str = 'vector-ray', level: int = logging.DEBUG) -> logging.Logger:
     """
-    Setup logger
+    Настроить логгер
 
     Args:
-        name: Logger name
-        level: Log level
+        name: Имя логгера
+        level: Уровень логирования
 
     Returns:
-        Configured logger
+        Настроенный логгер
     """
-    # Ensure log directory exists
+    # Убедиться, что директория для логов существует
     os.makedirs(LOG_DIR, exist_ok=True)
 
-    # Create logger
+    # Создать логгер
     logger = logging.getLogger(name)
     logger.setLevel(level)
 
-    # Prevent logs from propagating to root logger to avoid duplicate output
+    # Предотвратить распространение логов к корневому логгеру для избежания дублирования
     logger.propagate = False
 
     # If handlers already exist, don't add duplicates
@@ -88,7 +88,7 @@ def setup_logger(name: str = 'mirofish', level: int = logging.DEBUG) -> logging.
     return logger
 
 
-def get_logger(name: str = 'mirofish') -> logging.Logger:
+def get_logger(name: str = 'vector-ray') -> logging.Logger:
     """
     Get logger (create if not exists)
 

@@ -8,7 +8,7 @@
           <!-- Report Header -->
           <div class="report-header-block">
             <div class="report-meta">
-              <span class="report-tag">Prediction Report</span>
+              <span class="report-tag">Отчёт предсказаний</span>
               <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
             </div>
             <h1 class="main-title">{{ reportOutline.title }}</h1>
@@ -58,7 +58,7 @@
                       <path d="M12 2a10 10 0 0 1 10 10" stroke-width="4" stroke="#4B5563" stroke-linecap="round"></path>
                     </svg>
                   </div>
-                  <span class="loading-text">Generating {{ section.title }}...</span>
+                  <span class="loading-text">Генерация {{ section.title }}...</span>
                 </div>
               </div>
             </div>
@@ -72,7 +72,7 @@
             <div class="waiting-ring"></div>
             <div class="waiting-ring"></div>
           </div>
-          <span class="waiting-text">Waiting for Report Agent...</span>
+          <span class="waiting-text">Ожидание агента отчёта...</span>
         </div>
       </div>
 
@@ -85,7 +85,7 @@
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
           <div class="action-bar-text">
-            <span class="action-bar-title">Interactive Tools</span>
+            <span class="action-bar-title">Интерактивные инструменты</span>
             <span class="action-bar-subtitle mono">{{ profiles.length }} agents available</span>
           </div>
         </div>
@@ -98,7 +98,7 @@
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
               </svg>
-              <span>Chat with Report Agent</span>
+              <span>Чат с агентом отчёта</span>
             </button>
             <div class="agent-dropdown" v-if="profiles.length > 0">
               <button 
@@ -116,7 +116,7 @@
                 </svg>
               </button>
               <div v-if="showAgentDropdown" class="dropdown-menu">
-                <div class="dropdown-header">Select conversation target</div>
+                <div class="dropdown-header">Выберите цель разговора</div>
                 <div 
                   v-for="(agent, idx) in profiles" 
                   :key="idx"
@@ -141,7 +141,7 @@
                 <path d="M9 11l3 3L22 4"></path>
                 <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
               </svg>
-              <span>Send survey to the world</span>
+              <span>Отправить опрос в мир</span>
             </button>
           </div>
         </div>
@@ -154,8 +154,8 @@
             <div class="tools-card-header">
               <div class="tools-card-avatar">R</div>
               <div class="tools-card-info">
-                <div class="tools-card-name">Report Agent - Chat</div>
-                <div class="tools-card-subtitle">Quick chat version of Report Agent with 4 professional tools, has MiroFish's full memory</div>
+                <div class="tools-card-name">Агент отчёта — Чат</div>
+                <div class="tools-card-subtitle">Быстрая версия агента отчёта с 4 профессиональными инструментами, имеет полную память Vector Ray</div>
               </div>
               <button class="tools-card-toggle" @click="showToolsDetail = !showToolsDetail">
                 <svg :class="{ 'is-expanded': showToolsDetail }" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -172,8 +172,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">InsightForge Deep Attribution</div>
-                    <div class="tool-desc">Aligns real-world seed data with simulation environment state, combines Global/Local Memory mechanisms, provides cross-temporal deep attribution analysis</div>
+                    <div class="tool-name">InsightForge Глубокая атрибуция</div>
+                    <div class="tool-desc">Выравнивает данные семени реальности с состоянием среды симуляции, объединяет механизмы глобальной/локальной памяти, обеспечивает кросс-темпоральный анализ глубокой атрибуции</div>
                   </div>
                 </div>
                 <div class="tool-item tool-blue">
@@ -184,8 +184,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">PanoramaSearch Panoramic Tracking</div>
-                    <div class="tool-desc">Graph-based breadth-first traversal algorithm, reconstructs event propagation paths, captures full information flow topology</div>
+                    <div class="tool-name">PanoramaSearch Панорамное отслеживание</div>
+                    <div class="tool-desc">Алгоритм обхода графа в ширину, реконструирует пути распространения событий, захватывает полную топологию информационного потока</div>
                   </div>
                 </div>
                 <div class="tool-item tool-orange">
@@ -195,8 +195,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">QuickSearch Fast Retrieval</div>
-                    <div class="tool-desc">GraphRAG-based instant query interface, optimized indexing efficiency, for quickly extracting node attributes and discrete facts</div>
+                    <div class="tool-name">QuickSearch Быстрый поиск</div>
+                    <div class="tool-desc">Интерфейс мгновенных запросов на базе GraphRAG, оптимизированная эффективность индексации, для быстрого извлечения атрибутов узлов и дискретных фактов</div>
                   </div>
                 </div>
                 <div class="tool-item tool-green">
@@ -208,8 +208,8 @@
                     </svg>
                   </div>
                   <div class="tool-content">
-                    <div class="tool-name">InterviewSubAgent Virtual Interview</div>
-                    <div class="tool-desc">Autonomous interview, capable of parallel multi-turn conversations with individuals in simulated world, collects unstructured perspective data and psychological states</div>
+                    <div class="tool-name">InterviewSubAgent Виртуальное интервью</div>
+                    <div class="tool-desc">Автономное интервью, способно на параллельные многораундовые разговоры с индивидами в симулируемом мире, собирает неструктурированные данные о перспективах и психологических состояниях</div>
                   </div>
                 </div>
               </div>
@@ -235,7 +235,7 @@
             </div>
             <div v-if="showFullProfile && selectedAgent.bio" class="profile-card-body">
               <div class="profile-card-bio">
-                <div class="profile-card-label">Introduction</div>
+                <div class="profile-card-label">Введение</div>
                 <p>{{ selectedAgent.bio }}</p>
               </div>
             </div>
@@ -292,7 +292,7 @@
             <textarea 
               v-model="chatInput"
               class="chat-input"
-              placeholder="Type your question..."
+              placeholder="Введите ваш вопрос..."
               @keydown.enter.exact.prevent="sendMessage"
               :disabled="isSending || (!selectedAgent && chatTarget === 'agent')"
               rows="1"
@@ -317,8 +317,8 @@
           <div class="survey-setup">
             <div class="setup-section">
               <div class="section-header">
-                <span class="section-title">Select survey targets</span>
-                <span class="selection-count">Selected {{ selectedAgents.size }} / {{ profiles.length }}</span>
+                <span class="section-title">Выберите цели опроса</span>
+                <span class="selection-count">Выбрано {{ selectedAgents.size }} / {{ profiles.length }}</span>
               </div>
               <div class="agents-grid">
                 <label 
@@ -345,20 +345,20 @@
                 </label>
               </div>
               <div class="selection-actions">
-                <button class="action-link" @click="selectAllAgents">Select All</button>
+                <button class="action-link" @click="selectAllAgents">Выбрать все</button>
                 <span class="action-divider">|</span>
-                <button class="action-link" @click="clearAgentSelection">Clear</button>
+                <button class="action-link" @click="clearAgentSelection">Очистить</button>
               </div>
             </div>
 
             <div class="setup-section">
               <div class="section-header">
-                <span class="section-title">Survey Question</span>
+                <span class="section-title">Вопрос опроса</span>
               </div>
               <textarea 
                 v-model="surveyQuestion"
                 class="survey-input"
-                placeholder="Enter the question you want to ask all selected targets..."
+                placeholder="Введите вопрос, который хотите задать всем выбранным целям..."
                 rows="3"
               ></textarea>
             </div>
@@ -369,14 +369,14 @@
               @click="submitSurvey"
             >
               <span v-if="isSurveying" class="loading-spinner"></span>
-              <span v-else>Send Survey</span>
+              <span v-else>Отправить опрос</span>
             </button>
           </div>
 
           <!-- Survey Results -->
           <div v-if="surveyResults.length > 0" class="survey-results">
             <div class="results-header">
-              <span class="results-title">Survey Results</span>
+              <span class="results-title">Результаты опроса</span>
               <span class="results-count">{{ surveyResults.length }} replies</span>
             </div>
             <div class="results-list">
@@ -521,6 +521,16 @@ const toggleAgentDropdown = () => {
   if (showAgentDropdown.value) {
     activeTab.value = 'chat'
     chatTarget.value = 'agent'
+    // Calculate dropdown position
+    nextTick(() => {
+      const dropdown = document.querySelector('.dropdown-menu')
+      const trigger = document.querySelector('.agent-pill')
+      if (dropdown && trigger) {
+        const rect = trigger.getBoundingClientRect()
+        dropdown.style.top = `${rect.bottom + 6}px`
+        dropdown.style.left = `${rect.left}px`
+      }
+    })
   }
 }
 
@@ -695,9 +705,10 @@ const sendToReportAgent = async (message) => {
   })
 
   if (res.success && res.data) {
+    const responseContent = res.data.response?.response || res.data.response || res.data.answer || 'No response'
     chatHistory.value.push({
       role: 'assistant',
-      content: res.data.response || res.data.answer || 'No response',
+      content: responseContent,
       timestamp: new Date().toISOString()
     })
     addLog('Report Agent replied')
@@ -977,7 +988,7 @@ watch(() => props.simulationId, (newId) => {
 .main-split-layout {
   flex: 1;
   display: flex;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Left Panel - Report Style (identical to Step4Report.vue) */
@@ -987,9 +998,12 @@ watch(() => props.simulationId, (newId) => {
   background: #FFFFFF;
   border-right: 1px solid #E5E7EB;
   overflow-y: auto;
+  overflow-x: visible;
   display: flex;
   flex-direction: column;
   padding: 30px 50px 60px 50px;
+  position: relative;
+  z-index: 1;
 }
 
 .left-panel::-webkit-scrollbar {
@@ -1305,7 +1319,9 @@ watch(() => props.simulationId, (newId) => {
   display: flex;
   flex-direction: column;
   background: #FFFFFF;
-  overflow: hidden;
+  overflow: visible;
+  position: relative;
+  z-index: 150;
 }
 
 /* Action Bar - Professional Design */
@@ -1359,6 +1375,9 @@ watch(() => props.simulationId, (newId) => {
   gap: 6px;
   flex: 1;
   justify-content: flex-end;
+  overflow: visible;
+  position: relative;
+  z-index: 200;
 }
 
 .tab-pill {
@@ -1816,18 +1835,18 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .dropdown-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 240px;
+  position: fixed;
+  top: auto;
+  left: auto;
+  transform: none;
+  min-width: 280px;
   background: #FFFFFF;
   border: 1px solid #E5E7EB;
   border-radius: 12px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
-  max-height: 320px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 400px;
   overflow-y: auto;
-  z-index: 100;
+  z-index: 9999;
 }
 
 .dropdown-header {

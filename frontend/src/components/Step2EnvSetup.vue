@@ -6,81 +6,81 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">01</span>
-            <span class="step-title">Simulation Instance Initialization</span>
+            <span class="step-title">Инициализация экземпляра симуляции</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 0" class="badge success">Completed</span>
-            <span v-else class="badge processing">Initialization</span>
+            <span v-if="phase > 0" class="badge success">Завершено</span>
+            <span v-else class="badge processing">Инициализация</span>
           </div>
         </div>
         
         <div class="card-content">
           <p class="api-note">POST /api/simulation/create</p>
           <p class="description">
-            Create new simulation instance and fetch simulated world parameter template
+            Создать новый экземпляр симуляции и получить шаблон параметров симулируемого мира
           </p>
 
           <div v-if="simulationId" class="info-card">
             <div class="info-row">
-              <span class="info-label">Project ID</span>
+              <span class="info-label">ID проекта</span>
               <span class="info-value mono">{{ projectData?.project_id }}</span>
             </div>
             <div class="info-row">
-              <span class="info-label">Graph ID</span>
+              <span class="info-label">ID графа</span>
               <span class="info-value mono">{{ projectData?.graph_id }}</span>
             </div>
             <div class="info-row">
-              <span class="info-label">Simulation ID</span>
+              <span class="info-label">ID симуляции</span>
               <span class="info-value mono">{{ simulationId }}</span>
             </div>
             <div class="info-row">
-              <span class="info-label">Task ID</span>
-              <span class="info-value mono">{{ taskId || 'Async task completed' }}</span>
+              <span class="info-label">ID задачи</span>
+              <span class="info-value mono">{{ taskId || 'Асинхронная задача завершена' }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Step 02: Generate Agent Personas -->
+      <!-- Step 02: Генерация персон агентов -->
       <div class="step-card" :class="{ 'active': phase === 1, 'completed': phase > 1 }">
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">02</span>
-            <span class="step-title">Generate Agent Personas</span>
+            <span class="step-title">Генерация персон агентов</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 1" class="badge success">Completed</span>
+            <span v-if="phase > 1" class="badge success">Завершено</span>
             <span v-else-if="phase === 1" class="badge processing">{{ prepareProgress }}%</span>
-            <span v-else class="badge pending">Waiting</span>
+            <span v-else class="badge pending">Ожидание</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/prepare</p>
           <p class="description">
-            Combined with context，Automatically invoke tools to organize entities and relationships from knowledge graph，Initialize simulation individuals，and give them unique behaviors and memories based on reality seed
+            На основе контекста автоматически вызывает инструменты для организации сущностей и связей из графа знаний, инициализирует индивидов симуляции и даёт им уникальное поведение и воспоминания на основе семени реальности
           </p>
 
           <!-- Profiles Stats -->
           <div v-if="profiles.length > 0" class="stats-grid">
             <div class="stat-card">
               <span class="stat-value">{{ profiles.length }}</span>
-              <span class="stat-label">Current Agent Count</span>
+              <span class="stat-label">Текущее количество агентов</span>
             </div>
             <div class="stat-card">
               <span class="stat-value">{{ expectedTotal || '-' }}</span>
-              <span class="stat-label">Expected Agent Total</span>
+              <span class="stat-label">Ожидаемое общее количество</span>
             </div>
             <div class="stat-card">
               <span class="stat-value">{{ totalTopicsCount }}</span>
-              <span class="stat-label">Current Related Topics Count for Reality Seed</span>
+              <span class="stat-label">Текущее количество связанных тем для семени реальности</span>
             </div>
           </div>
 
           <!-- Profiles List Preview -->
           <div v-if="profiles.length > 0" class="profiles-preview">
             <div class="preview-header">
-              <span class="preview-title">Generated Agent Personas</span>
+              <span class="preview-title">Сгенерированные персоны агентов</span>
             </div>
             <div class="profiles-list">
               <div 
@@ -90,13 +90,13 @@
                 @click="selectProfile(profile)"
               >
                 <div class="profile-header">
-                  <span class="profile-realname">{{ profile.username || 'Unknown' }}</span>
+                  <span class="profile-realname">{{ profile.username || 'Неизвестно' }}</span>
                   <span class="profile-username">@{{ profile.name || `agent_${idx}` }}</span>
                 </div>
                 <div class="profile-meta">
-                  <span class="profile-profession">{{ profile.profession || 'Unknown Profession' }}</span>
+                  <span class="profile-profession">{{ translateProfession(profile.profession) || 'Неизвестная профессия' }}</span>
                 </div>
-                <p class="profile-bio">{{ profile.bio || 'No introduction available' }}</p>
+                <p class="profile-bio">{{ profile.bio || 'Нет описания' }}</p>
                 <div v-if="profile.interested_topics?.length" class="profile-topics">
                   <span 
                     v-for="topic in profile.interested_topics.slice(0, 3)" 
@@ -113,24 +113,24 @@
         </div>
       </div>
 
-      <!-- Step 03: Generate Dual Platform Simulation Configuration -->
+      <!-- Step 03: Генерация конфигурации дуальной платформы -->
       <div class="step-card" :class="{ 'active': phase === 2, 'completed': phase > 2 }">
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">03</span>
-            <span class="step-title">Generate Dual Platform Simulation Configuration</span>
+            <span class="step-title">Генерация конфигурации дуальной платформы</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 2" class="badge success">Completed</span>
-            <span v-else-if="phase === 2" class="badge processing">Generating</span>
-            <span v-else class="badge pending">Waiting</span>
+            <span v-if="phase > 2" class="badge success">Завершено</span>
+            <span v-else-if="phase === 2" class="badge processing">Генерация</span>
+            <span v-else class="badge pending">Ожидание</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/prepare</p>
           <p class="description">
-            LLM Based on simulation requirements and reality seed，Intelligently set world time flow rate、Recommendation algorithm、Active time period for each individual、Speech frequency、Event trigger and other parameters
+            LLM на основе требований симуляции и семени реальности интеллектуально настраивает скорость течения времени в мире, рекомендательный алгоритм, периоды активности для каждого индивида, частоту речи, триггеры событий и другие параметры
           </p>
           
           <!-- Config Preview -->
@@ -139,40 +139,40 @@
             <div class="config-block">
               <div class="config-grid">
                 <div class="config-item">
-                  <span class="config-item-label">Simulation Duration</span>
+                  <span class="config-item-label">Длительность симуляции</span>
                   <span class="config-item-value">{{ simulationConfig.time_config?.total_simulation_hours || '-' }} hours</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-item-label">Duration per round</span>
+                  <span class="config-item-label">Длительность раунда</span>
                   <span class="config-item-value">{{ simulationConfig.time_config?.minutes_per_round || '-' }} minutes</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-item-label">Total rounds</span>
+                  <span class="config-item-label">Всего раундов</span>
                   <span class="config-item-value">{{ Math.floor((simulationConfig.time_config?.total_simulation_hours * 60 / simulationConfig.time_config?.minutes_per_round)) || '-' }} rounds</span>
                 </div>
                 <div class="config-item">
-                  <span class="config-item-label">Active per hour</span>
+                  <span class="config-item-label">Активность в час</span>
                   <span class="config-item-value">{{ simulationConfig.time_config?.agents_per_hour_min }}-{{ simulationConfig.time_config?.agents_per_hour_max }}</span>
                 </div>
               </div>
               <div class="time-periods">
                 <div class="period-item">
-                  <span class="period-label">Peak period</span>
+                  <span class="period-label">Пиковый период</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.peak_hours?.join(':00, ') }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.peak_activity_multiplier }}</span>
                 </div>
                 <div class="period-item">
-                  <span class="period-label">Working hours</span>
+                  <span class="period-label">Рабочие часы</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.work_hours?.[0] }}:00-{{ simulationConfig.time_config?.work_hours?.slice(-1)[0] }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.work_activity_multiplier }}</span>
                 </div>
                 <div class="period-item">
-                  <span class="period-label">Morning time period</span>
+                  <span class="period-label">Утренний период</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.morning_hours?.[0] }}:00-{{ simulationConfig.time_config?.morning_hours?.slice(-1)[0] }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.morning_activity_multiplier }}</span>
                 </div>
                 <div class="period-item">
-                  <span class="period-label">Valley period</span>
+                  <span class="period-label">Период спада</span>
                   <span class="period-hours">{{ simulationConfig.time_config?.off_peak_hours?.[0] }}:00-{{ simulationConfig.time_config?.off_peak_hours?.slice(-1)[0] }}:00</span>
                   <span class="period-multiplier">×{{ simulationConfig.time_config?.off_peak_activity_multiplier }}</span>
                 </div>
@@ -182,8 +182,8 @@
             <!-- Agent Configuration -->
             <div class="config-block">
               <div class="config-block-header">
-                <span class="config-block-title">Agent Configuration</span>
-                <span class="config-block-badge">{{ simulationConfig.agent_configs?.length || 0 }} Number</span>
+                <span class="config-block-title">Конфигурация агентов</span>
+                <span class="config-block-badge">{{ simulationConfig.agent_configs?.length || 0 }} шт</span>
               </div>
               <div class="agents-cards">
                 <div 
@@ -194,18 +194,18 @@
                   <!-- Card header -->
                   <div class="agent-card-header">
                     <div class="agent-identity">
-                      <span class="agent-id">Agent {{ agent.agent_id }}</span>
+                      <span class="agent-id">Агент {{ agent.agent_id }}</span>
                       <span class="agent-name">{{ agent.entity_name }}</span>
                     </div>
                     <div class="agent-tags">
-                      <span class="agent-type">{{ agent.entity_type }}</span>
-                      <span class="agent-stance" :class="'stance-' + agent.stance">{{ agent.stance }}</span>
+                      <span class="agent-type">{{ translateEntity(agent.entity_type) }}</span>
+                      <span class="agent-stance" :class="'stance-' + agent.stance">{{ translateStance(agent.stance) }}</span>
                     </div>
                   </div>
                   
                   <!-- Active timeline -->
                   <div class="agent-timeline">
-                    <span class="timeline-label">Active period</span>
+                    <span class="timeline-label">Активный период</span>
                     <div class="mini-timeline">
                       <div 
                         v-for="hour in 24" 
@@ -228,34 +228,34 @@
                   <div class="agent-params">
                     <div class="param-group">
                       <div class="param-item">
-                        <span class="param-label">Post/time</span>
+                        <span class="param-label">Постов/время</span>
                         <span class="param-value">{{ agent.posts_per_hour }}</span>
                       </div>
                       <div class="param-item">
-                        <span class="param-label">Comment/time</span>
+                        <span class="param-label">Комментариев/время</span>
                         <span class="param-value">{{ agent.comments_per_hour }}</span>
                       </div>
                       <div class="param-item">
-                        <span class="param-label">Response delay</span>
+                        <span class="param-label">Задержка ответа</span>
                         <span class="param-value">{{ agent.response_delay_min }}-{{ agent.response_delay_max }}min</span>
                       </div>
                     </div>
                     <div class="param-group">
                       <div class="param-item">
-                        <span class="param-label">Activity level</span>
+                        <span class="param-label">Уровень активности</span>
                         <span class="param-value with-bar">
                           <span class="mini-bar" :style="{ width: (agent.activity_level * 100) + '%' }"></span>
                           {{ (agent.activity_level * 100).toFixed(0) }}%
                         </span>
                       </div>
                       <div class="param-item">
-                        <span class="param-label">Sentiment tendency</span>
+                        <span class="param-label">Тенденция настроения</span>
                         <span class="param-value" :class="agent.sentiment_bias > 0 ? 'positive' : agent.sentiment_bias < 0 ? 'negative' : 'neutral'">
                           {{ agent.sentiment_bias > 0 ? '+' : '' }}{{ agent.sentiment_bias?.toFixed(1) }}
                         </span>
                       </div>
                       <div class="param-item">
-                        <span class="param-label">Influence</span>
+                        <span class="param-label">Влияние</span>
                         <span class="param-value highlight">{{ agent.influence_weight?.toFixed(1) }}</span>
                       </div>
                     </div>
@@ -267,59 +267,59 @@
             <!-- Platform configuration -->
             <div class="config-block">
               <div class="config-block-header">
-                <span class="config-block-title">Recommendation algorithm configuration</span>
+                <span class="config-block-title">Конфигурация рекомендательного алгоритма</span>
               </div>
               <div class="platforms-grid">
                 <div v-if="simulationConfig.twitter_config" class="platform-card">
                   <div class="platform-card-header">
-                    <span class="platform-name">Platform 1：Square / Information flow</span>
+                    <span class="platform-name">Платформа 1: Площадка / Информационный поток</span>
                   </div>
                   <div class="platform-params">
                     <div class="param-row">
-                      <span class="param-label">Time weight</span>
+                      <span class="param-label">Вес времени</span>
                       <span class="param-value">{{ simulationConfig.twitter_config.recency_weight }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Popularity weight</span>
+                      <span class="param-label">Вес популярности</span>
                       <span class="param-value">{{ simulationConfig.twitter_config.popularity_weight }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Relevance weight</span>
+                      <span class="param-label">Вес релевантности</span>
                       <span class="param-value">{{ simulationConfig.twitter_config.relevance_weight }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Virus threshold</span>
+                      <span class="param-label">Порог вируализации</span>
                       <span class="param-value">{{ simulationConfig.twitter_config.viral_threshold }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Echo chamber strength</span>
+                      <span class="param-label">Сила эхо-камеры</span>
                       <span class="param-value">{{ simulationConfig.twitter_config.echo_chamber_strength }}</span>
                     </div>
                   </div>
                 </div>
                 <div v-if="simulationConfig.reddit_config" class="platform-card">
                   <div class="platform-card-header">
-                    <span class="platform-name">Platform 2：Topic / Community</span>
+                    <span class="platform-name">Платформа 2: Тема / Сообщество</span>
                   </div>
                   <div class="platform-params">
                     <div class="param-row">
-                      <span class="param-label">Time weight</span>
+                      <span class="param-label">Вес времени</span>
                       <span class="param-value">{{ simulationConfig.reddit_config.recency_weight }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Popularity weight</span>
+                      <span class="param-label">Вес популярности</span>
                       <span class="param-value">{{ simulationConfig.reddit_config.popularity_weight }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Relevance weight</span>
+                      <span class="param-label">Вес релевантности</span>
                       <span class="param-value">{{ simulationConfig.reddit_config.relevance_weight }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Virus threshold</span>
+                      <span class="param-label">Порог вируализации</span>
                       <span class="param-value">{{ simulationConfig.reddit_config.viral_threshold }}</span>
                     </div>
                     <div class="param-row">
-                      <span class="param-label">Echo chamber strength</span>
+                      <span class="param-label">Сила эхо-камеры</span>
                       <span class="param-value">{{ simulationConfig.reddit_config.echo_chamber_strength }}</span>
                     </div>
                   </div>
@@ -351,19 +351,19 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">04</span>
-            <span class="step-title">Initial activation arrangement</span>
+            <span class="step-title">Настройка начальной активации</span>
           </div>
           <div class="step-status">
-            <span v-if="phase > 3" class="badge success">Completed</span>
-            <span v-else-if="phase === 3" class="badge processing">Arranging</span>
-            <span v-else class="badge pending">Waiting</span>
+            <span v-if="phase > 3" class="badge success">Завершено</span>
+            <span v-else-if="phase === 3" class="badge processing">Настройка</span>
+            <span v-else class="badge pending">Ожидание</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/prepare</p>
           <p class="description">
-            Based on narrative direction，Automatically generate initial activation events and trending topics，Guide the initial state of the simulated world
+            На основе направления нарратива автоматически генерируются начальные события активации и трендовые темы, задающие начальное состояние симулируемого мира
           </p>
 
           <div v-if="simulationConfig?.event_config" class="orchestration-content">
@@ -380,14 +380,14 @@
                     </linearGradient>
                   </defs>
                 </svg>
-                Narrative Guidance Direction
+                Направление нарратива
               </span>
               <p class="narrative-text">{{ simulationConfig.event_config.narrative_direction }}</p>
             </div>
 
-            <!-- Trending Topics -->
+            <!-- Трендовые темы -->
             <div class="topics-section">
-              <span class="box-label">Initial trending topics</span>
+              <span class="box-label">Начальные трендовые темы</span>
               <div class="hot-topics-grid">
                 <span v-for="topic in simulationConfig.event_config.hot_topics" :key="topic" class="hot-topic-tag">
                   # {{ topic }}
@@ -397,7 +397,7 @@
 
             <!-- Initial post stream -->
             <div class="initial-posts-section">
-              <span class="box-label">Initial activation sequence ({{ simulationConfig.event_config.initial_posts.length }})</span>
+              <span class="box-label">Последовательность начальной активации ({{ simulationConfig.event_config.initial_posts.length }})</span>
               <div class="posts-timeline">
                 <div v-for="(post, idx) in simulationConfig.event_config.initial_posts" :key="idx" class="timeline-item">
                   <div class="timeline-marker"></div>
@@ -405,7 +405,7 @@
                     <div class="post-header">
                       <span class="post-role">{{ post.poster_type }}</span>
                       <span class="post-agent-info">
-                        <span class="post-id">Agent {{ post.poster_agent_id }}</span>
+                        <span class="post-id">Агент {{ post.poster_agent_id }}</span>
                         <span class="post-username">@{{ getAgentUsername(post.poster_agent_id) }}</span>
                       </span>
                     </div>
@@ -423,29 +423,29 @@
         <div class="card-header">
           <div class="step-info">
             <span class="step-num">05</span>
-            <span class="step-title">Preparation completed</span>
+            <span class="step-title">Подготовка завершена</span>
           </div>
           <div class="step-status">
-            <span v-if="phase >= 4" class="badge processing">In progress</span>
-            <span v-else class="badge pending">Waiting</span>
+            <span v-if="phase >= 4" class="badge processing">В процессе</span>
+            <span v-else class="badge pending">Ожидание</span>
           </div>
         </div>
 
         <div class="card-content">
           <p class="api-note">POST /api/simulation/start</p>
-          <p class="description">Simulation environment preparation completed，Can start running simulation</p>
+          <p class="description">Подготовка окружения симуляции завершена，Можно начать запуск симуляции</p>
           
           <!-- Simulation Rounds Configuration - Only show after configuration generation is completed and rounds are calculated -->
           <div v-if="simulationConfig && autoGeneratedRounds" class="rounds-config-section">
             <div class="rounds-header">
               <div class="header-left">
-                <span class="section-title">Simulation Rounds Setting</span>
-                <span class="section-desc">MiroFish Automatically plan and infer reality <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> hours，Each round represents reality <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> minutes time elapsed</span>
+                <span class="section-title">Настройка раундов симуляции</span>
+                <span class="section-desc">Vector Ray Automatically plan and infer reality <span class="desc-highlight">{{ simulationConfig?.time_config?.total_simulation_hours || '-' }}</span> hours，Each round represents reality <span class="desc-highlight">{{ simulationConfig?.time_config?.minutes_per_round || '-' }}</span> minutes time elapsed</span>
               </div>
               <label class="switch-control">
                 <input type="checkbox" v-model="useCustomRounds">
                 <span class="switch-track"></span>
-                <span class="switch-label">Custom</span>
+                <span class="switch-label">Своё</span>
               </label>
             </div>
             
@@ -457,7 +457,7 @@
                     <span class="val-unit">rounds</span>
                   </div>
                   <div class="slider-meta-info">
-                    <span>IfAgentScale is100：Estimated time approximately {{ Math.round(customMaxRounds * 0.6) }} minutes</span>
+                    <span>При AgentScale 100: примерное время {{ Math.round(customMaxRounds * 0.6) }} минут</span>
                   </div>
                 </div>
 
@@ -497,11 +497,11 @@
                           <circle cx="12" cy="12" r="10"></circle>
                           <polyline points="12 6 12 12 16 14"></polyline>
                         </svg>
-                        IfAgentScale is100：Estimated time {{ Math.round(autoGeneratedRounds * 0.6) }} minutes
+                        При AgentScale 100: примерное время {{ Math.round(autoGeneratedRounds * 0.6) }} минут
                       </span>
                     </div>
                     <div class="auto-desc">
-                      <p class="highlight-tip" @click="useCustomRounds = true">If first run，Strongly recommend switching to‘Custom mode’Reduce simulation rounds，to quickly preview effects and reduce error risk ➝</p>
+                      <p class="highlight-tip" @click="useCustomRounds = true">При первом запуске настоятельно рекомендуем переключиться в режим «Своё» для уменьшения раундов симуляции, быстрого предпросмотра и снижения риска ошибок ➝</p>
                     </div>
                   </div>
                 </div>
@@ -538,7 +538,7 @@
               <span class="modal-realname">{{ selectedProfile.username }}</span>
               <span class="modal-username">@{{ selectedProfile.name }}</span>
             </div>
-            <span class="modal-profession">{{ selectedProfile.profession }}</span>
+            <span class="modal-profession">{{ translateProfession(selectedProfile.profession) || 'Неизвестная профессия' }}</span>
           </div>
           <button class="close-btn" @click="selectedProfile = null">×</button>
         </div>
@@ -547,32 +547,32 @@
           <!-- Basic information -->
           <div class="modal-info-grid">
             <div class="info-item">
-              <span class="info-label">Age manifestation</span>
-              <span class="info-value">{{ selectedProfile.age || '-' }} years old</span>
+              <span class="info-label">Возрастное проявление</span>
+              <span class="info-value">{{ selectedProfile.age || '-' }} лет</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Gender manifestation</span>
-              <span class="info-value">{{ { male: 'Male', female: 'Female', other: 'Other' }[selectedProfile.gender] || selectedProfile.gender }}</span>
+              <span class="info-label">Гендерное проявление</span>
+              <span class="info-value">{{ { male: 'Мужской', female: 'Женский', other: 'Другой' }[selectedProfile.gender] || selectedProfile.gender }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Country/Region</span>
+              <span class="info-label">Страна/Регион</span>
               <span class="info-value">{{ selectedProfile.country || '-' }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Event manifestationMBTI</span>
+              <span class="info-label">Событийное проявление MBTI</span>
               <span class="info-value mbti">{{ selectedProfile.mbti || '-' }}</span>
             </div>
           </div>
 
           <!-- Introduction -->
           <div class="modal-section">
-            <span class="section-label">Persona Introduction</span>
-            <p class="section-bio">{{ selectedProfile.bio || 'No introduction available' }}</p>
+            <span class="section-label">Введение персоны</span>
+            <p class="section-bio">{{ selectedProfile.bio || 'Нет описания' }}</p>
           </div>
 
           <!-- Followed Topics -->
           <div class="modal-section" v-if="selectedProfile.interested_topics?.length">
-            <span class="section-label">Reality Seed Related Topics</span>
+            <span class="section-label">Темы, связанные с семенем реальности</span>
             <div class="topics-grid">
               <span 
                 v-for="topic in selectedProfile.interested_topics" 
@@ -584,25 +584,25 @@
 
           <!-- Detailed Persona -->
           <div class="modal-section" v-if="selectedProfile.persona">
-            <span class="section-label">Detailed Persona Background</span>
+            <span class="section-label">Детальный фон персоны</span>
             
             <!-- Persona Dimension Overview -->
             <div class="persona-dimensions">
               <div class="dimension-card">
-                <span class="dim-title">Event panoramic experience</span>
-                <span class="dim-desc">Complete behavior trajectory in this event</span>
+                <span class="dim-title">Панорамный опыт события</span>
+                <span class="dim-desc">Полная траектория поведения в этом событии</span>
               </div>
               <div class="dimension-card">
-                <span class="dim-title">Behavior pattern profiling</span>
-                <span class="dim-desc">Experience summary and action style preference</span>
+                <span class="dim-title">Профилирование поведенческого паттерна</span>
+                <span class="dim-desc">Резюме опыта и предпочтения стиля действий</span>
               </div>
               <div class="dimension-card">
-                <span class="dim-title">Unique memory imprints</span>
-                <span class="dim-desc">Memory formed based on reality seed</span>
+                <span class="dim-title">Уникальные отпечатки памяти</span>
+                <span class="dim-desc">Память, сформированная на основе семени реальности</span>
               </div>
               <div class="dimension-card">
-                <span class="dim-title">Social Relationship Network</span>
-                <span class="dim-desc">Individual Links and Interaction Graph</span>
+                <span class="dim-title">Сеть социальных связей</span>
+                <span class="dim-desc">Индивидуальные связи и граф взаимодействий</span>
               </div>
             </div>
 
@@ -640,6 +640,66 @@ import {
   getSimulationConfig,
   getSimulationConfigRealtime 
 } from '../api/simulation'
+
+// Переводы типов сущностей
+const entityTranslations = {
+  'Consumer': 'Потребитель',
+  'Manufacturer': 'Производитель',
+  'Analyst': 'Аналитик',
+  'RetailChain': 'Розничная сеть',
+  'HealthAdvocate': 'Адвокат здоровья',
+  'MediaOutlet': 'СМИ',
+  'GovernmentAgency': 'Госучреждение',
+  'BrandStore': 'Бренд-магазин',
+  'Person': 'Человек',
+  'Organization': 'Организация',
+  'Company': 'Компания',
+  'Product': 'Продукт',
+  'Event': 'Событие',
+  'Location': 'Локация',
+  'Technology': 'Технология',
+}
+
+// Переводы позиций (stance)
+const stanceTranslations = {
+  'neutral': 'Нейтральный',
+  'supportive': 'Поддерживающий',
+  'opposing': 'Противник',
+  'observer': 'Наблюдатель',
+}
+
+// Переводы профессий (генерируются LLM)
+const professionTranslations = {
+  'Retail Chain Operator': 'Оператор розничной сети',
+  'Market Analyst': 'Рыночный аналитик',
+  'Health Advocate': 'Адвокат здоровья',
+  'Consumer Representative': 'Представитель потребителей',
+  'Media Specialist': 'Медиа-специалист',
+  'Government Official': 'Государственный служащий',
+  'Business Owner': 'Владелец бизнеса',
+  'Supply Chain Manager': 'Менеджер цепочки поставок',
+  'Quality Control Specialist': 'Специалист по контролю качества',
+  'Marketing Specialist': 'Маркетолог',
+  'Product Manager': 'Продакт-менеджер',
+  'Customer Service Representative': 'Специалист по обслуживанию клиентов',
+  'Data Scientist': 'Дата-сайентист',
+  'Researcher': 'Исследователь',
+  'Consultant': 'Консультант',
+  'Journalist': 'Журналист',
+  'Public Relations Specialist': 'Специалист по связям с общественностью',
+  'Economist': 'Экономист',
+  'Policy Analyst': 'Политический аналитик',
+  'Healthcare Professional': 'Медработник',
+  'Environmental Specialist': 'Эколог',
+  'Educator': 'Педагог',
+  'Legal Professional': 'Юрист',
+  'Financial Analyst': 'Финансовый аналитик',
+}
+
+// Функции перевода
+const translateEntity = (name) => entityTranslations[name] || name
+const translateStance = (stance) => stanceTranslations[stance] || stance
+const translateProfession = (profession) => professionTranslations[profession] || profession
 
 const props = defineProps({
   simulationId: String,  // Passed from parent component
@@ -745,10 +805,10 @@ const handleStartSimulation = () => {
   if (useCustomRounds.value) {
     // User custom rounds，Pass max_rounds Parameter
     params.maxRounds = customMaxRounds.value
-    addLog(`Start simulation，Custom rounds: ${customMaxRounds.value} rounds`)
+    addLog(`Запуск симуляции, кастомные раунды: ${customMaxRounds.value} раундов`)
   } else {
     // User chose to keep auto-generated rounds，Do not pass max_rounds Parameter
-    addLog(`Start simulation，Use auto-configured rounds: ${autoGeneratedRounds.value} rounds`)
+    addLog(`Запуск симуляции, авто-раунды: ${autoGeneratedRounds.value} раундов`)
   }
   
   emit('next-step', params)
@@ -940,7 +1000,7 @@ const fetchProfilesRealtime = async () => {
         
         // If all generation is completed
         if (expectedTotal.value && currentCount >= expectedTotal.value) {
-          addLog(`✓ All (All) ${currentCount} NumberAgentPersona generation completed`)
+          addLog(`✓ All (All) ${currentCount} агентных персон generation completed`)
         }
       }
     }
@@ -987,10 +1047,10 @@ const fetchConfigRealtime = async () => {
         
         // Show detailed configuration summary
         if (data.summary) {
-          addLog(`  ├─ AgentQuantity: ${data.summary.total_agents}Number`)
-          addLog(`  ├─ Simulation Duration: ${data.summary.simulation_hours}hours`)
+          addLog(`  ├─ Количество агентов: ${data.summary.total_agents}шт`)
+          addLog(`  ├─ Длительность симуляции: ${data.summary.simulation_hours}hours`)
           addLog(`  ├─ Initial posts: ${data.summary.initial_posts_count}items`)
-          addLog(`  ├─ Trending Topics: ${data.summary.hot_topics_count}Number`)
+          addLog(`  ├─ Трендовые темы: ${data.summary.hot_topics_count}шт`)
           addLog(`  └─ Platform configuration: Twitter ${data.summary.has_twitter_config ? '✓' : '✗'}, Reddit ${data.summary.has_reddit_config ? '✓' : '✗'}`)
         }
         
@@ -1008,7 +1068,7 @@ const fetchConfigRealtime = async () => {
         
         stopConfigPolling()
         phase.value = 4
-        addLog('✓ Env Setup Completed，Can start simulation')
+        addLog('✓ Настройка окружения завершена, можно запускать симуляцию')
         emit('update-status', 'completed')
       }
     }
@@ -1023,7 +1083,7 @@ const loadPreparedData = async () => {
 
   // Get one last time Profiles
   await fetchProfilesRealtime()
-  addLog(`Loaded ${profiles.value.length} NumberAgentPersona`)
+  addLog(`Loaded ${profiles.value.length} агентных персон`)
 
   // Get configuration（Use real-time interface）
   try {
@@ -1035,12 +1095,12 @@ const loadPreparedData = async () => {
         
         // Show detailed configuration summary
         if (res.data.summary) {
-          addLog(`  ├─ AgentQuantity: ${res.data.summary.total_agents}Number`)
-          addLog(`  ├─ Simulation Duration: ${res.data.summary.simulation_hours}hours`)
+          addLog(`  ├─ Количество агентов: ${res.data.summary.total_agents}шт`)
+          addLog(`  ├─ Длительность симуляции: ${res.data.summary.simulation_hours}hours`)
           addLog(`  └─ Initial posts: ${res.data.summary.initial_posts_count}items`)
         }
         
-        addLog('✓ Env Setup Completed，Can start simulation')
+        addLog('✓ Настройка окружения завершена, можно запускать симуляцию')
         phase.value = 4
         emit('update-status', 'completed')
       } else {

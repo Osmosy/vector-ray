@@ -1,8 +1,8 @@
 """
-EmbeddingService — local embedding via Ollama API
+EmbeddingService — локальные эмбеддинги через Ollama API
 
-Replaces Zep Cloud's built-in embedding with local nomic-embed-text model.
-Uses Ollama's /api/embed endpoint for vector generation (768 dimensions).
+Заменяет встроенные эмбеддинги Zep Cloud на локальную модель nomic-embed-text.
+Использует эндпоинт Ollama /api/embed для генерации векторов (768 измерений).
 """
 
 import time
@@ -14,11 +14,11 @@ import requests
 
 from ..config import Config
 
-logger = logging.getLogger('mirofish.embedding')
+logger = logging.getLogger('vector-ray.embedding')
 
 
 class EmbeddingService:
-    """Generate embeddings using local Ollama server."""
+    """Генерация эмбеддингов через локальный сервер Ollama."""
 
     def __init__(
         self,
@@ -33,30 +33,30 @@ class EmbeddingService:
         self.timeout = timeout
         self._embed_url = f"{self.base_url}/api/embed"
 
-        # Simple in-memory cache (text -> embedding vector)
-        # Using dict instead of lru_cache because lists aren't hashable
+        # Простой кэш в памяти (текст -> вектор эмбеддинга)
+        # Используем dict вместо lru_cache, т.к. списки не хэшируются
         self._cache: dict[str, List[float]] = {}
         self._cache_max_size = 2000
 
     def embed(self, text: str) -> List[float]:
         """
-        Generate embedding for a single text.
+        Генерация эмбеддинга для одного текста.
 
         Args:
-            text: Input text to embed
+            text: Входной текст для эмбеддинга
 
         Returns:
-            768-dimensional float vector
+            768-мерный вектор float
 
         Raises:
-            EmbeddingError: If Ollama request fails after retries
+            EmbeddingError: Если запрос к Ollama не удался после повторных попыток
         """
         if not text or not text.strip():
-            raise EmbeddingError("Cannot embed empty text")
+            raise EmbeddingError("Невозможно создать эмбеддинг для пустого текста")
 
         text = text.strip()
 
-        # Check cache
+        # Проверить кэш
         if text in self._cache:
             return self._cache[text]
 

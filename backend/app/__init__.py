@@ -1,5 +1,5 @@
 """
-MiroFish Backend - Flask Application Factory
+Vector Ray Backend - Flask Application Factory
 """
 
 import os
@@ -27,7 +27,7 @@ def create_app(config_class=Config):
         app.json.ensure_ascii = False
 
     # Setup logging
-    logger = setup_logger('mirofish')
+    logger = setup_logger('vector-ray')
 
     # Only print startup info in reloader subprocess (avoid printing twice in debug mode)
     is_reloader_process = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
@@ -36,7 +36,7 @@ def create_app(config_class=Config):
 
     if should_log_startup:
         logger.info("=" * 50)
-        logger.info("MiroFish-Offline Backend starting...")
+        logger.info("Vector Ray-Offline Backend starting...")
         logger.info("=" * 50)
 
     # Enable CORS
@@ -63,30 +63,32 @@ def create_app(config_class=Config):
     # Request logging middleware
     @app.before_request
     def log_request():
-        logger = get_logger('mirofish.request')
+        logger = get_logger('vector-ray.request')
         logger.debug(f"Request: {request.method} {request.path}")
         if request.content_type and 'json' in request.content_type:
             logger.debug(f"Request body: {request.get_json(silent=True)}")
 
     @app.after_request
     def log_response(response):
-        logger = get_logger('mirofish.request')
+        logger = get_logger('vector-ray.request')
         logger.debug(f"Response: {response.status_code}")
         return response
 
     # Register blueprints
     from .api import graph_bp, simulation_bp, report_bp
+    from .api.settings import settings_bp
     app.register_blueprint(graph_bp, url_prefix='/api/graph')
     app.register_blueprint(simulation_bp, url_prefix='/api/simulation')
     app.register_blueprint(report_bp, url_prefix='/api/report')
+    app.register_blueprint(settings_bp, url_prefix='/api')
 
     # Health check
     @app.route('/health')
     def health():
-        return {'status': 'ok', 'service': 'MiroFish-Offline Backend'}
+        return {'status': 'ok', 'service': 'Vector Ray-Offline Backend'}
 
     if should_log_startup:
-        logger.info("MiroFish-Offline Backend startup complete")
+        logger.info("Vector Ray-Offline Backend startup complete")
 
     return app
 

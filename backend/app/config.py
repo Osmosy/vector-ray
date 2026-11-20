@@ -1,60 +1,60 @@
 """
-Configuration Management
-Loads configuration from .env file in project root directory
+Управление конфигурацией
+Загружает конфигурацию из .env файла в корневой директории проекта
 """
 
 import os
 from dotenv import load_dotenv
 
-# Load .env file from project root
-# Path: MiroFish/.env (relative to backend/app/config.py)
+# Загрузить .env файл из корня проекта
+# Путь: Vector Ray/.env (относительно backend/app/config.py)
 project_root_env = os.path.join(os.path.dirname(__file__), '../../.env')
 
 if os.path.exists(project_root_env):
     load_dotenv(project_root_env, override=True)
 else:
-    # If no .env in root, try to load environment variables (for production)
+    # Если нет .env в корне, попробовать загрузить переменные окружения (для production)
     load_dotenv(override=True)
 
 
 class Config:
-    """Flask configuration class"""
+    """Класс конфигурации Flask"""
 
-    # Flask configuration
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'mirofish-secret-key')
+    # Конфигурация Flask
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'vector-ray-secret-key')
     DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
 
-    # JSON configuration - disable ASCII escaping to display Chinese directly (not as \uXXXX)
+    # Конфигурация JSON - отключить ASCII escaping для отображения русского текста напрямую
     JSON_AS_ASCII = False
 
-    # LLM configuration (unified OpenAI format)
+    # Конфигурация LLM (унифицированный формат OpenAI)
     LLM_API_KEY = os.environ.get('LLM_API_KEY')
     LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'http://localhost:11434/v1')
     LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'qwen2.5:32b')
 
-    # Neo4j configuration
+    # Конфигурация Neo4j
     NEO4J_URI = os.environ.get('NEO4J_URI', 'bolt://localhost:7687')
     NEO4J_USER = os.environ.get('NEO4J_USER', 'neo4j')
-    NEO4J_PASSWORD = os.environ.get('NEO4J_PASSWORD', 'mirofish')
+    NEO4J_PASSWORD = os.environ.get('NEO4J_PASSWORD', 'vector-ray')
 
-    # Embedding configuration
+    # Конфигурация эмбеддингов
     EMBEDDING_MODEL = os.environ.get('EMBEDDING_MODEL', 'nomic-embed-text')
     EMBEDDING_BASE_URL = os.environ.get('EMBEDDING_BASE_URL', 'http://localhost:11434')
 
-    # File upload configuration
+    # Конфигурация загрузки файлов
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
     UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), '../uploads')
     ALLOWED_EXTENSIONS = {'pdf', 'md', 'txt', 'markdown'}
 
-    # Text processing configuration
-    DEFAULT_CHUNK_SIZE = 500  # Default chunk size
-    DEFAULT_CHUNK_OVERLAP = 50  # Default overlap size
+    # Конфигурация обработки текста
+    DEFAULT_CHUNK_SIZE = 500  # Размер чанка по умолчанию
+    DEFAULT_CHUNK_OVERLAP = 50  # Размер перекрытия по умолчанию
 
-    # OASIS simulation configuration
+    # Конфигурация симуляции OASIS
     OASIS_DEFAULT_MAX_ROUNDS = int(os.environ.get('OASIS_DEFAULT_MAX_ROUNDS', '10'))
     OASIS_SIMULATION_DATA_DIR = os.path.join(os.path.dirname(__file__), '../uploads/simulations')
 
-    # OASIS platform available actions configuration
+    # Конфигурация доступных действий платформы OASIS
     OASIS_TWITTER_ACTIONS = [
         'CREATE_POST', 'LIKE_POST', 'REPOST', 'FOLLOW', 'DO_NOTHING', 'QUOTE_POST'
     ]

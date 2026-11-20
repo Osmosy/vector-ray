@@ -1,5 +1,5 @@
 """
-MiroFish Backend Entry Point
+Vector Ray Backend Entry Point
 """
 
 import os

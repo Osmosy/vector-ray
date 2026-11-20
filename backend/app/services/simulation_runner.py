@@ -23,7 +23,7 @@ from ..utils.logger import get_logger
 from .graph_memory_updater import GraphMemoryManager
 from .simulation_ipc import SimulationIPCClient, CommandType, IPCResponse
 
-logger = get_logger('mirofish.simulation_runner')
+logger = get_logger('vector-ray.simulation_runner')
 
 # Flag whether cleanup function is registered
 _cleanup_registered = False
@@ -415,8 +415,13 @@ class SimulationRunner:
             #   reddit/actions.jsonl  - Reddit action log
             #   simulation.log        - Main process log
             
+            # Use venv Python interpreter to ensure oasis and other dependencies are available
+            venv_python = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'venv', 'bin', 'python')
+            if not os.path.exists(venv_python):
+                venv_python = sys.executable  # Fallback to system Python
+            
             cmd = [
-                sys.executable,  # Python interpreter
+                venv_python,  # Python interpreter (venv)
                 script_path,
                 "--config", config_path,  # Use full config file path
             ]

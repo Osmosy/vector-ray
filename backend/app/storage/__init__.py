@@ -1,5 +1,5 @@
 """
-MiroFish-Offline Storage Layer
+Vector Ray-Offline Storage Layer
 
 Local graph storage replacing Zep Cloud:
 - Neo4j CE for graph persistence

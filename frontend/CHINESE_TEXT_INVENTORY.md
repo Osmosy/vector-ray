@@ -1,7 +1,7 @@
-# MiroFish Frontend - Chinese Text Translation Inventory
+# Vector Ray Frontend - Chinese Text Translation Inventory
 
 ## Overview
-Complete inventory of Chinese text found in the MiroFish frontend application that requires translation to English.
+Complete inventory of Chinese text found in the Vector Ray frontend application that requires translation to English.
 
 **Scan Date:** 2026-03-15
 **Total Files with Chinese:** 20 files
@@ -362,8 +362,8 @@ Complete inventory of Chinese text found in the MiroFish frontend application th
 
 **Strings:**
 - `<html lang="zh-CN">` - Language attribute
-- `<meta name="description" content="MiroFish - 社交媒体舆论模拟系统" />` (MiroFish - Social Media Opinion Simulation System)
-- `<title>MiroFish - 预测万物</title>` (MiroFish - Predict Everything)
+- `<meta name="description" content="Vector Ray - 社交媒体舆论模拟系统" />` (Vector Ray - Social Media Opinion Simulation System)
+- `<title>Vector Ray - 预测万物</title>` (Vector Ray - Predict Everything)
 
 ---
 
