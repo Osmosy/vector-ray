@@ -610,7 +610,10 @@ class SimulationRunner:
             graph_updater = GraphMemoryManager.get_updater(state.simulation_id)
         
         try:
-            with open(log_path, 'r', encoding='utf-8') as f:
+            # errors='replace': строка могла остаться недописанной или испорченной
+            # (обрыв процесса, два писателя). Такая строка отбрасывается ниже по
+            # JSONDecodeError, но весь остальной лог читается.
+            with open(log_path, 'r', encoding='utf-8', errors='replace') as f:
                 f.seek(position)
                 for line in f:
                     line = line.strip()
@@ -776,6 +779,47 @@ class SimulationRunner:
                 os.killpg(pgid, signal.SIGKILL)
                 process.wait(timeout=5)
     
+    @classmethod
+    def has_live_process(cls, simulation_id: str) -> bool:
+        """Жив ли процесс симуляции — независимо от статуса в run_state.
+
+        После завершения раундов подпроцесс OASIS остаётся жить в режиме ожидания
+        (для интервью с агентами), а статус в run_state уже «completed». Проверка
+        по статусу такой процесс не видит, и принудительный перезапуск оставлял
+        два процесса на одни и те же файлы: они по очереди писали в actions.jsonl,
+        лог превращался в мусор, и бэкенд не мог его прочитать.
+        """
+        process = cls._processes.get(simulation_id)
+        return bool(process and process.poll() is None)
+
+    @classmethod
+    def terminate_live_process(cls, simulation_id: str) -> bool:
+        """Погасить живой процесс симуляции, если он есть. True — если гасили."""
+        if not cls.has_live_process(simulation_id):
+            return False
+
+        process = cls._processes[simulation_id]
+        try:
+            cls._terminate_process(process, simulation_id)
+        except ProcessLookupError:
+            pass
+        except Exception as e:
+            logger.error(f"Failed to terminate process group: {simulation_id}, error={e}")
+            try:
+                process.terminate()
+                process.wait(timeout=5)
+            except Exception:
+                process.kill()
+
+        # Дождаться, чтобы файлы не остались наполовину записанными
+        try:
+            process.wait(timeout=10)
+        except Exception:
+            pass
+        cls._processes.pop(simulation_id, None)
+        logger.info(f"Live simulation process terminated before restart: {simulation_id}")
+        return True
+
     @classmethod
     def stop_simulation(cls, simulation_id: str) -> SimulationRunState:
         """Stop simulation"""

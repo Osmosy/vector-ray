@@ -1580,6 +1580,11 @@ def start_simulation():
 
                 # If force mode，Clean runtime logs
                 if force:
+                    # Процесс мог остаться жить в режиме ожидания уже после
+                    # завершения раундов (status=completed). Тогда его не видит
+                    # ветка выше, и два процесса начинают писать в одни файлы.
+                    if SimulationRunner.terminate_live_process(simulation_id):
+                        logger.info(f"Force mode: terminated wait-mode process of {simulation_id}")
                     logger.info(f"Force mode: cleaning simulation runtime files for {simulation_id}")
                     cleanup_result = SimulationRunner.cleanup_simulation_logs(simulation_id)
                     if not cleanup_result.get("success"):

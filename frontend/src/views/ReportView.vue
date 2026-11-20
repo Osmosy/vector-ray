@@ -15,7 +15,7 @@
             :class="{ active: viewMode === mode }"
             @click="viewMode = mode"
           >
-            {{ { graph: 'Graph', split: 'Split', workbench: 'Workbench' }[mode] }}
+            {{ { graph: 'Граф', split: 'Схема', workbench: 'Работа' }[mode] }}
           </button>
         </div>
       </div>
@@ -110,8 +110,8 @@ const statusClass = computed(() => {
 
 const statusText = computed(() => {
   if (currentStatus.value === 'error') return 'Error'
-  if (currentStatus.value === 'completed') return 'Completed'
-  return 'Generating'
+  if (currentStatus.value === 'completed') return 'Завершено'
+  return 'Генерация'
 })
 
 // --- Helpers ---

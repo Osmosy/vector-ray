@@ -114,7 +114,7 @@ class ReportLogger:
         self.log(
             action="planning_start",
             stage="planning",
-            details={"message": "Started planning report outline"}
+            details={"message": "Планирую структуру отчёта"}
         )
     
     def log_planning_context(self, context: Dict[str, Any]):
