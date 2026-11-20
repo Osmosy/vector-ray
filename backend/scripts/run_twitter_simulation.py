@@ -653,7 +653,9 @@ class TwitterSimulationRunner:
 
         start_hour = resolve_start_hour(time_config)
         total_actions = initial_action_count
-        last_rowid = 0
+        # Начальные посты уже в базе: без сдвига курсора первый раунд прочитает их
+        # снова и залогирует дубли (лента и счётчик задвоятся).
+        _, last_rowid = fetch_new_actions_from_db(db_path, 0, agent_names)
 
         for round_num in range(total_rounds):
             # Calculate current simulation time

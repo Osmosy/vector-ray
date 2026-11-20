@@ -20,6 +20,33 @@ from ..utils.logger import get_logger
 logger = get_logger('vector-ray.api.report')
 
 
+def _simulation_last_activity(state) -> str:
+    """Когда симуляция менялась в последний раз: состояние + run_state."""
+    stamps = [getattr(state, 'updated_at', '') or '']
+    try:
+        from ..services.simulation_runner import SimulationRunner
+
+        run_state = SimulationRunner.get_run_state(state.simulation_id)
+        if run_state and getattr(run_state, 'updated_at', None):
+            stamps.append(run_state.updated_at)
+    except Exception:
+        pass
+    return max(stamps)
+
+
+def _report_is_stale(report, state) -> bool:
+    """Отчёт старше последнего прогона этой же симуляции?
+
+    Перезапуск симуляции не удаляет отчёт, а /generate отдавал его как «готовый»:
+    пользователь получал текст, написанный по предыдущему прогону, без единого
+    предупреждения. Сравниваем метку отчёта с последней активностью симуляции.
+    """
+    report_stamp = getattr(report, 'completed_at', None) or getattr(report, 'created_at', None)
+    if not report_stamp:
+        return False
+    return str(report_stamp) < _simulation_last_activity(state)
+
+
 # ============== Report Generation Interface ==============
 
 @report_bp.route('/generate', methods=['POST'])
@@ -36,16 +63,26 @@ def generate_report():
         if not state:
             return jsonify({"success": False, "error": f"Симуляция не найдена: {simulation_id}"}), 404
 
+        replaced_report_id = None
         if not force_regenerate:
             existing_report = ReportManager.get_report_by_simulation(simulation_id)
             if existing_report and existing_report.status == ReportStatus.COMPLETED:
-                return jsonify({"success": True, "data": {
-                    "simulation_id": simulation_id,
-                    "report_id": existing_report.report_id,
-                    "status": "completed",
-                    "message": "Отчёт уже существует",
-                    "already_generated": True
-                }})
+                if _report_is_stale(existing_report, state):
+                    # Симуляцию перезапустили после отчёта — старый текст описывает
+                    # другие данные. Молча отдавать его нельзя, генерируем заново.
+                    replaced_report_id = existing_report.report_id
+                    logger.info(
+                        f"Отчёт {existing_report.report_id} старше последнего прогона "
+                        f"симуляции {simulation_id} — генерирую заново"
+                    )
+                else:
+                    return jsonify({"success": True, "data": {
+                        "simulation_id": simulation_id,
+                        "report_id": existing_report.report_id,
+                        "status": "completed",
+                        "message": "Отчёт уже существует",
+                        "already_generated": True
+                    }})
 
         project = ProjectManager.get_project(state.project_id)
         if not project:
@@ -105,7 +142,8 @@ def generate_report():
             "task_id": task_id,
             "status": "generating",
             "message": "Задача генерации отчёта запущена. Прогресс — через /api/report/generate/status",
-            "already_generated": False
+            "already_generated": False,
+            "replaced_stale_report": replaced_report_id
         }})
 
     except Exception as e:
@@ -120,17 +158,22 @@ def get_generate_status():
         task_id = data.get('task_id')
         simulation_id = data.get('simulation_id')
 
-        if simulation_id:
+        # Ярлык «отчёт уже готов» срабатывает только без task_id: с task_id клиент
+        # спрашивает про конкретную генерацию, и старый отчёт не должен отвечать
+        # за неё — иначе опрос показывает completed, пока новый текст ещё пишется.
+        if simulation_id and not task_id:
             existing_report = ReportManager.get_report_by_simulation(simulation_id)
             if existing_report and existing_report.status == ReportStatus.COMPLETED:
-                return jsonify({"success": True, "data": {
-                    "simulation_id": simulation_id,
-                    "report_id": existing_report.report_id,
-                    "status": "completed",
-                    "progress": 100,
-                    "message": "Отчёт сгенерирован",
-                    "already_completed": True
-                }})
+                state = SimulationManager().get_simulation(simulation_id)
+                if state is None or not _report_is_stale(existing_report, state):
+                    return jsonify({"success": True, "data": {
+                        "simulation_id": simulation_id,
+                        "report_id": existing_report.report_id,
+                        "status": "completed",
+                        "progress": 100,
+                        "message": "Отчёт сгенерирован",
+                        "already_completed": True
+                    }})
 
         if not task_id:
             return jsonify({"success": False, "error": "Укажите task_id или simulation_id"}), 400

@@ -1210,6 +1210,11 @@ async def run_twitter_simulation(
     # Log round 0 end
     if action_logger:
         action_logger.log_round_end(0, initial_action_count)
+        # Начальные посты уже записаны в базу, но курсор чтения всё ещё 0: в первом
+        # раунде fetch_new_actions_from_db прочитал бы их снова, и они попали бы в ленту
+        # и в счётчик второй раз (93 «действия» при 65 записях в trace).
+        # Сами действия залогированы выше — курсор просто переставляем за них.
+        _, last_rowid = fetch_new_actions_from_db(db_path, 0, agent_names)
     
     # Main simulation loop
     time_config = config.get("time_config", {})
@@ -1420,6 +1425,11 @@ async def run_reddit_simulation(
     # Log round 0 end
     if action_logger:
         action_logger.log_round_end(0, initial_action_count)
+        # Начальные посты уже записаны в базу, но курсор чтения всё ещё 0: в первом
+        # раунде fetch_new_actions_from_db прочитал бы их снова, и они попали бы в ленту
+        # и в счётчик второй раз (93 «действия» при 65 записях в trace).
+        # Сами действия залогированы выше — курсор просто переставляем за них.
+        _, last_rowid = fetch_new_actions_from_db(db_path, 0, agent_names)
     
     # Main simulation loop
     time_config = config.get("time_config", {})

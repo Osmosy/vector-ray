@@ -636,7 +636,9 @@ class RedditSimulationRunner:
         start_hour = resolve_start_hour(time_config)
 
         total_actions = 0
-        last_rowid = 0
+        # Начальные посты уже в базе: сдвигаем курсор, иначе первый раунд
+        # прочитает их повторно и залогирует дубли.
+        _, last_rowid = fetch_new_actions_from_db(db_path, 0, agent_names)
 
         for round_num in range(total_rounds):
             simulated_minutes = start_hour * 60 + round_num * minutes_per_round

@@ -58,7 +58,7 @@
               <div class="detail-panel-header">
                 <span class="detail-title">{{ selectedItem.type === 'node' ? 'Детали узла' : 'Связь' }}</span>
                 <span v-if="selectedItem.type === 'node'" class="detail-badge" :style="{ background: selectedItem.color }">
-                  {{ selectedItem.entityType }}
+                  {{ translateEntity(selectedItem.entityType) }}
                 </span>
                 <button class="detail-close" @click="closeDetailPanel">×</button>
               </div>
@@ -418,6 +418,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData } from '../api/graph'
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
 import * as d3 from 'd3'
+import { translateEntity } from '../utils/labels.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -499,24 +500,7 @@ const closeDetailPanel = () => {
   selectedItem.value = null
 }
 
-// Переводы типов сущностей
-const entityTranslations = {
-  'Consumer': 'Потребитель',
-  'Manufacturer': 'Производитель',
-  'Analyst': 'Аналитик',
-  'RetailChain': 'Розничная сеть',
-  'HealthAdvocate': 'Адвокат здоровья',
-  'MediaOutlet': 'СМИ',
-  'GovernmentAgency': 'Госучреждение',
-  'BrandStore': 'Бренд-магазин',
-  'Person': 'Человек',
-  'Organization': 'Организация',
-  'Company': 'Компания',
-  'Product': 'Продукт',
-  'Event': 'Событие',
-  'Location': 'Локация',
-  'Technology': 'Технология',
-}
+
 
 // Переводы типов связей
 const relationTranslations = {
@@ -536,7 +520,6 @@ const relationTranslations = {
 }
 
 // Функция перевода
-const translateEntity = (name) => entityTranslations[name] || name
 const translateRelation = (name) => relationTranslations[name] || name
 
 // Format date

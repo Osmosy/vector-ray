@@ -633,42 +633,16 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
-import { 
+import {
   prepareSimulation, 
   getPrepareStatus, 
   getSimulationProfilesRealtime,
   getSimulationConfig,
   getSimulationConfigRealtime 
 } from '../api/simulation'
+import { translateEntity, translateStance } from '../utils/labels.js'
 
-// Переводы типов сущностей
-const entityTranslations = {
-  'Consumer': 'Потребитель',
-  'Manufacturer': 'Производитель',
-  'Analyst': 'Аналитик',
-  'RetailChain': 'Розничная сеть',
-  'HealthAdvocate': 'Адвокат здоровья',
-  'MediaOutlet': 'СМИ',
-  'GovernmentAgency': 'Госучреждение',
-  'BrandStore': 'Бренд-магазин',
-  'Person': 'Человек',
-  'Organization': 'Организация',
-  'Company': 'Компания',
-  'Product': 'Продукт',
-  'Event': 'Событие',
-  'Location': 'Локация',
-  'Technology': 'Технология',
-}
-
-// Переводы позиций (stance)
-const stanceTranslations = {
-  'neutral': 'Нейтральный',
-  'supportive': 'Поддерживающий',
-  'opposing': 'Противник',
-  'observer': 'Наблюдатель',
-}
-
-// Переводы профессий (генерируются LLM)
+// Типы сущностей и позиции переводятся общим словарём — utils/labels.js
 const professionTranslations = {
   'Retail Chain Operator': 'Оператор розничной сети',
   'Market Analyst': 'Рыночный аналитик',
@@ -696,10 +670,8 @@ const professionTranslations = {
   'Financial Analyst': 'Финансовый аналитик',
 }
 
-// Функции перевода
-const translateEntity = (name) => entityTranslations[name] || name
-const translateStance = (stance) => stanceTranslations[stance] || stance
 const translateProfession = (profession) => professionTranslations[profession] || profession
+
 
 const props = defineProps({
   simulationId: String,  // Passed from parent component

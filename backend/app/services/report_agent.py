@@ -1257,6 +1257,60 @@ class ReportAgent:
                 ]
             )
     
+    MAX_CONTINUATIONS = 2
+    # Чем может заканчиваться законченный абзац или список
+    TERMINAL_CHARS = '.!?…»":*)]>'
+    CONTINUATION_PROMPT = (
+        "Твой ответ оборвался на полуслове: закончился лимит вывода. Продолжи ровно "
+        "с места обрыва — без повторов уже написанного, без нового заголовка и без "
+        "вступления. Просто дописывай текст до конца раздела."
+    )
+
+    def _answer_looks_cut(self, text: str) -> bool:
+        """Оборван ли ответ: упёрлись в лимит вывода или фраза не закончена.
+
+        Раньше раздел просто обрывался на полуслове («…списанные без подтвер»,
+        «…деэскалация получается частичной и замедленной: ко») и уезжал в отчёт
+        как есть: читатель видел обрубок и не знал, что текст неполный.
+        """
+        finish_reason = getattr(self.llm, '_last_finish_reason', None)
+        if finish_reason == 'length':
+            return True
+        cleaned = (text or '').rstrip()
+        if len(cleaned) < 400:
+            return False
+        # Провайдер не сказал «length», но текст явно не закончен: не на точке,
+        # не на кавычке, не на маркдауне. Один лишний вызов дешевле обрубка
+        # в готовом отчёте.
+        return cleaned[-1] not in self.TERMINAL_CHARS
+
+    def _complete_answer(self, content: str, messages: list) -> str:
+        """Дописать раздел, если модель не уложилась в лимит вывода."""
+        for attempt in range(self.MAX_CONTINUATIONS):
+            if not self._answer_looks_cut(content):
+                break
+            try:
+                part = self.llm.chat(
+                    messages=list(messages) + [
+                        {"role": "assistant", "content": content},
+                        {"role": "user", "content": self.CONTINUATION_PROMPT},
+                    ],
+                    temperature=0.4,
+                    max_tokens=4096,
+                )
+            except Exception as e:
+                logger.warning(f"Не удалось дописать раздел после обрыва: {e}")
+                break
+            if not part:
+                logger.warning("Дописывание раздела вернуло пустой ответ — оставляю как есть")
+                break
+            part = part.split("Final Answer:")[-1].strip()
+            if not part:
+                break
+            content = content.rstrip() + " " + part
+            logger.info(f"Раздел дописан после обрыва, попытка {attempt + 1}")
+        return content
+
     def _generate_section_react(
         self, 
         section: ReportSection,
@@ -1433,6 +1487,7 @@ class ReportAgent:
 
                 # Normal completion
                 final_answer = cleaned_response.split("Final Answer:")[-1].strip()
+                final_answer = self._complete_answer(final_answer, messages)
                 logger.info(f"Section {section.title} generation completed (tool calls: {tool_calls_count}times)")
 
                 if self.report_logger:
@@ -1534,7 +1589,7 @@ class ReportAgent:
             # Directly adopt this content as final answer, no more waiting
             # directlyconvertthis contentas finalanswer, no more waiting
             logger.info(f"Section {section.title} did not detectto 'Final Answer:' prefix, directlyadoptLLM outputas finalcontent（Tool call: {tool_calls_count}times)")
-            final_answer = cleaned_response
+            final_answer = self._complete_answer(cleaned_response, messages)
 
             if self.report_logger:
                 self.report_logger.log_section_content(
@@ -1563,6 +1618,7 @@ class ReportAgent:
             final_answer = response.split("Final Answer:")[-1].strip()
         else:
             final_answer = response
+        final_answer = self._complete_answer(final_answer, messages)
         
         # Log sectioncontentgeneratecompletion log
         if self.report_logger:

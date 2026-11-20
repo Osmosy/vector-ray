@@ -53,7 +53,7 @@
           <div class="detail-panel-header">
             <span class="detail-title">{{ selectedItem.type === 'node' ? 'Детали узла' : 'Связь' }}</span>
             <span v-if="selectedItem.type === 'node'" class="detail-type-badge" :style="{ background: selectedItem.color, color: '#fff' }">
-              {{ selectedItem.entityType }}
+              {{ translateEntity(selectedItem.entityType) }}
             </span>
             <button class="detail-close" @click="closeDetailPanel">×</button>
           </div>
@@ -238,6 +238,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
 import * as d3 from 'd3'
+import { translateEntity } from '../utils/labels.js'
 
 const props = defineProps({
   graphData: Object,
