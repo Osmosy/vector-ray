@@ -131,6 +131,14 @@ class LLMClient:
         except Exception as e:
             last_error = e
             logger.warning(f"Model {self.model} failed: {e}")
+            # Резервная цепочка — это локальные модели Ollama. Для облачного
+            # эндпоинта такие имена ничего не значат: провайдер отвергнет каждый
+            # вызов, а пользователь увидит "All models in cascade failed" вместо
+            # настоящей причины. Ошибку отдаём как есть.
+            if not self._is_ollama():
+                raise Exception(
+                    f"Модель {self.model} на {self.base_url} вернула ошибку: {last_error}"
+                ) from last_error
 
         # Try fallback models
         current_idx = self._current_model_idx
@@ -189,7 +197,14 @@ class LLMClient:
             raise ValueError(f"Invalid JSON format from LLM: {cleaned_response}")
 
     def reset_to_primary(self):
-        """Reset to primary model"""
+        """Вернуть основную модель задачи.
+
+        Цепочка резерва — локальные модели Ollama: на облачном эндпоинте
+        переключать туда нечего, там основная модель и остаётся основной.
+        """
+        if not self._is_ollama():
+            self._current_model_idx = 0
+            return
         self.model = self.MODEL_CASCADE[0]
         self._current_model_idx = 0
-        logger.info("Reset to primary model: {self.model}")
+        logger.info(f"Reset to primary model: {self.model}")
