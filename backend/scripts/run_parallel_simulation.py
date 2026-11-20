@@ -156,6 +156,7 @@ def init_logging_for_simulation(simulation_dir: str):
 
 
 from action_logger import SimulationLogManager, PlatformActionLogger
+from sim_time import resolve_start_hour
 
 try:
     from camel.models import ModelFactory
@@ -1225,6 +1226,8 @@ async def run_twitter_simulation(
     
     start_time = datetime.now()
     
+    start_hour = resolve_start_hour(time_config)
+
     for round_num in range(total_rounds):
         # Check if received exit signal
         if _shutdown_event and _shutdown_event.is_set():
@@ -1232,7 +1235,7 @@ async def run_twitter_simulation(
                 main_logger.info(f"Received exit signal，at round {round_num + 1} stop simulation")
             break
         
-        simulated_minutes = round_num * minutes_per_round
+        simulated_minutes = start_hour * 60 + round_num * minutes_per_round
         simulated_hour = (simulated_minutes // 60) % 24
         simulated_day = simulated_minutes // (60 * 24) + 1
         
@@ -1286,6 +1289,15 @@ async def run_twitter_simulation(
     result.total_actions = total_actions
     elapsed = (datetime.now() - start_time).total_seconds()
     log_info(f"Simulation loop completed! Time taken: {elapsed:.1f}seconds, Total actions: {total_actions}")
+
+    if total_actions <= initial_action_count:
+        log_info(
+            "ВНИМАНИЕ: за весь прогон агенты не сделали ни одного действия. "
+            "Симулированное окно попало в часы, которых нет в active_hours агентов "
+            f"(старт в {start_hour:02d}:00, {total_rounds} раундов по {minutes_per_round} мин). "
+            "Увеличьте VECTOR_RAY_MINUTES_PER_ROUND, число раундов или задайте "
+            "time_config.start_hour."
+        )
     
     return result
 
@@ -1424,6 +1436,8 @@ async def run_reddit_simulation(
     
     start_time = datetime.now()
     
+    start_hour = resolve_start_hour(time_config)
+
     for round_num in range(total_rounds):
         # Check if received exit signal
         if _shutdown_event and _shutdown_event.is_set():
@@ -1431,7 +1445,7 @@ async def run_reddit_simulation(
                 main_logger.info(f"Received exit signal，at round {round_num + 1} stop simulation")
             break
         
-        simulated_minutes = round_num * minutes_per_round
+        simulated_minutes = start_hour * 60 + round_num * minutes_per_round
         simulated_hour = (simulated_minutes // 60) % 24
         simulated_day = simulated_minutes // (60 * 24) + 1
         

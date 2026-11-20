@@ -48,6 +48,7 @@ class LLMClient:
         
         # Track current model index for fallback
         self._current_model_idx = 0
+        self._last_finish_reason: Optional[str] = None
         self._set_model_index(self.model)
 
     def _set_model_index(self, model: str):
@@ -58,6 +59,18 @@ class LLMClient:
                 return
         # Если модель не в cascade, используем её как primary
         self._current_model_idx = 0
+
+    def _num_ctx_for(self, model: str) -> int:
+        """Окно контекста для Ollama.
+
+        У локальных моделей окно ограничивает видеопамять, поэтому по умолчанию
+        8192. Облачные (``:cloud``) считаются не здесь: им широкое окно ничего
+        не стоит, а думающей модели нужно место и под рассуждение, и под ответ —
+        иначе finish_reason='length' и пустой content.
+        """
+        if ':cloud' in (model or ''):
+            return max(self._num_ctx, 32768)
+        return self._num_ctx
 
     def _is_ollama(self) -> bool:
         """Check if we're talking to an Ollama server."""
@@ -90,15 +103,45 @@ class LLMClient:
             kwargs["response_format"] = response_format
 
         # For Ollama: pass num_ctx via extra_body
-        if self._is_ollama() and self._num_ctx:
+        num_ctx = self._num_ctx_for(model)
+        if self._is_ollama() and num_ctx:
             kwargs["extra_body"] = {
-                "options": {"num_ctx": self._num_ctx}
+                "options": {"num_ctx": num_ctx}
             }
 
         response = self.client.chat.completions.create(**kwargs)
-        content = response.choices[0].message.content
-        # Remove <think> content if present (MiniMax M2.5)
-        content = re.sub(r'<think>[\s\S]*?</think>', '', content).strip()
+        self._last_finish_reason = response.choices[0].finish_reason
+        content = response.choices[0].message.content or ""
+        # Remove  thinking content if present (MiniMax M2.5)
+        content = re.sub(r' thinking[\s\S]*?</think>', '', content).strip()
+
+        # Думающие модели тратят бюджет на рассуждения: при max_tokens=4096
+        # рассуждение съедает всё, finish_reason='length', а content пустой.
+        # Молча возвращать пустую строку нельзя — наверху это превращается в
+        # «Invalid JSON format from LLM:» без объяснения. Один раз повторяем с
+        # запасом; если и его не хватило — говорим прямо, чего не хватило.
+        if not content and self._last_finish_reason == "length":
+            bigger = min(32768, max(8192, max_tokens * 3))
+            logger.warning(
+                f"Модель {model} истратила {max_tokens} токенов на рассуждения и не "
+                f"вернула ответ; повторяю с max_tokens={bigger}"
+            )
+            kwargs["max_tokens"] = bigger
+            if self._is_ollama():
+                kwargs["extra_body"] = {
+                    "options": {"num_ctx": max(num_ctx, 32768)}
+                }
+            response = self.client.chat.completions.create(**kwargs)
+            self._last_finish_reason = response.choices[0].finish_reason
+            content = response.choices[0].message.content or ""
+            content = re.sub(r'<think>[\s\S]*?</think>', '', content).strip()
+            if not content:
+                raise Exception(
+                    f"Модель {model} не вернула текст: finish_reason="
+                    f"{self._last_finish_reason}, лимит {bigger} токенов. "
+                    f"Увеличьте max_tokens или возьмите модель без длинных рассуждений."
+                )
+
         return content
 
     def chat(

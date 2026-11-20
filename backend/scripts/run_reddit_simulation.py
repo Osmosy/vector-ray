@@ -13,6 +13,7 @@ Usage:
     python run_reddit_simulation.py --config /path/to/simulation_config.json --no-wait  # Close immediately after completion
 """
 
+from sim_time import resolve_start_hour
 import argparse
 import asyncio
 import json
@@ -623,8 +624,10 @@ class RedditSimulationRunner:
         print("\nStart simulation loop...")
         start_time = datetime.now()
         
+        start_hour = resolve_start_hour(time_config)
+
         for round_num in range(total_rounds):
-            simulated_minutes = round_num * minutes_per_round
+            simulated_minutes = start_hour * 60 + round_num * minutes_per_round
             simulated_hour = (simulated_minutes // 60) % 24
             simulated_day = simulated_minutes // (60 * 24) + 1
             
