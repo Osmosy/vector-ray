@@ -233,7 +233,7 @@
                   <div class="vote-info">
                     <svg v-if="action.action_type === 'UPVOTE_POST'" class="icon-small" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"></polyline></svg>
                     <svg v-else class="icon-small" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    <span class="vote-label">{{ action.action_type === 'UPVOTE_POST' ? 'Upvoted' : 'Downvoted' }} Post</span>
+                    <span class="vote-label">{{ action.action_type === 'UPVOTE_POST' ? 'Лайк' : 'Дизлайк' }} посту</span>
                   </div>
                   <div v-if="action.action_args?.post_content" class="voted-content">
                     "{{ truncateContent(action.action_args.post_content, 120) }}"
@@ -272,8 +272,8 @@
     <!-- Bottom Info / Logs -->
     <div class="system-logs">
       <div class="log-header">
-        <span class="log-title">SIMULATION MONITOR</span>
-        <span class="log-id">{{ simulationId || 'NO_SIMULATION' }}</span>
+        <span class="log-title">МОНИТОР СИМУЛЯЦИИ</span>
+        <span class="log-id">{{ simulationId || 'НЕТ СИМУЛЯЦИИ' }}</span>
       </div>
       <div class="log-content" ref="logContent">
         <div class="log-line" v-for="(log, idx) in systemLogs" :key="idx">
@@ -597,21 +597,23 @@ const fetchRunStatusDetail = async () => {
 }
 
 // Helpers
+// Плашки действий в ленте: раньше здесь стояли английские слова
+// (POST / LIKE / UPVOTE) в русском интерфейсе.
 const getActionTypeLabel = (type) => {
   const labels = {
-    'CREATE_POST': 'POST',
-    'REPOST': 'REPOST',
-    'LIKE_POST': 'LIKE',
-    'CREATE_COMMENT': 'COMMENT',
-    'LIKE_COMMENT': 'LIKE',
-    'DO_NOTHING': 'IDLE',
-    'FOLLOW': 'FOLLOW',
-    'SEARCH_POSTS': 'SEARCH',
-    'QUOTE_POST': 'QUOTE',
-    'UPVOTE_POST': 'UPVOTE',
-    'DOWNVOTE_POST': 'DOWNVOTE'
+    'CREATE_POST': 'ПОСТ',
+    'REPOST': 'РЕПОСТ',
+    'LIKE_POST': 'ЛАЙК',
+    'CREATE_COMMENT': 'КОММЕНТАРИЙ',
+    'LIKE_COMMENT': 'ЛАЙК',
+    'DO_NOTHING': 'ПАУЗА',
+    'FOLLOW': 'ПОДПИСКА',
+    'SEARCH_POSTS': 'ПОИСК',
+    'QUOTE_POST': 'ЦИТАТА',
+    'UPVOTE_POST': 'ЛАЙК',
+    'DOWNVOTE_POST': 'ДИЗЛАЙК'
   }
-  return labels[type] || type || 'UNKNOWN'
+  return labels[type] || type || 'НЕИЗВЕСТНО'
 }
 
 const getActionTypeClass = (type) => {

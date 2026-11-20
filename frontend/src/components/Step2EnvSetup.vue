@@ -140,15 +140,15 @@
               <div class="config-grid">
                 <div class="config-item">
                   <span class="config-item-label">Длительность симуляции</span>
-                  <span class="config-item-value">{{ simulationConfig.time_config?.total_simulation_hours || '-' }} hours</span>
+                  <span class="config-item-value">{{ simulationConfig.time_config?.total_simulation_hours || '-' }} ч</span>
                 </div>
                 <div class="config-item">
                   <span class="config-item-label">Длительность раунда</span>
-                  <span class="config-item-value">{{ simulationConfig.time_config?.minutes_per_round || '-' }} minutes</span>
+                  <span class="config-item-value">{{ simulationConfig.time_config?.minutes_per_round || '-' }} мин</span>
                 </div>
                 <div class="config-item">
                   <span class="config-item-label">Всего раундов</span>
-                  <span class="config-item-value">{{ Math.floor((simulationConfig.time_config?.total_simulation_hours * 60 / simulationConfig.time_config?.minutes_per_round)) || '-' }} rounds</span>
+                  <span class="config-item-value">{{ Math.floor((simulationConfig.time_config?.total_simulation_hours * 60 / simulationConfig.time_config?.minutes_per_round)) || '-' }} раундов</span>
                 </div>
                 <div class="config-item">
                   <span class="config-item-label">Активность в час</span>
@@ -619,7 +619,7 @@
     <div class="system-logs">
       <div class="log-header">
         <span class="log-title">СИСТЕМНЫЙ ЛОГ</span>
-        <span class="log-id">{{ simulationId || 'NO_SIMULATION' }}</span>
+        <span class="log-id">{{ simulationId || 'НЕТ СИМУЛЯЦИИ' }}</span>
       </div>
       <div class="log-content" ref="logContent">
         <div class="log-line" v-for="(log, idx) in systemLogs" :key="idx">

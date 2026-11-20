@@ -167,9 +167,9 @@ class EmbeddingService:
                     pass
                 else:
                     # Client error (4xx) — don't retry
-                    raise EmbeddingError(f"Ollama embedding failed: {e}") from e
+                    raise EmbeddingError(f"Ollama не отдал эмбеддинг: {e}") from e
             except (KeyError, ValueError) as e:
-                raise EmbeddingError(f"Invalid Ollama response: {e}") from e
+                raise EmbeddingError(f"Некорректный ответ Ollama: {e}") from e
 
             # Exponential backoff
             if attempt < self.max_retries - 1:
@@ -178,7 +178,7 @@ class EmbeddingService:
                 time.sleep(wait)
 
         raise EmbeddingError(
-            f"Ollama embedding failed after {self.max_retries} retries: {last_error}"
+            f"Ollama не отдал эмбеддинг после {self.max_retries} попыток: {last_error}"
         )
 
     def _cache_put(self, text: str, vector: List[float]) -> None:

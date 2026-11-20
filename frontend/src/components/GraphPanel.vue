@@ -107,7 +107,7 @@
             <template v-if="selectedItem.data.isSelfLoopGroup">
               <div class="edge-relation-header self-loop-header">
                 {{ selectedItem.data.source_name }} — Собственные связи
-                <span class="self-loop-count">{{ selectedItem.data.selfLoopCount }} items</span>
+                <span class="self-loop-count">{{ selectedItem.data.selfLoopCount }} связей</span>
               </div>
               
               <div class="self-loop-list">

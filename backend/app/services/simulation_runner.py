@@ -341,7 +341,7 @@ class SimulationRunner:
         config_path = os.path.join(sim_dir, "simulation_config.json")
         
         if not os.path.exists(config_path):
-            raise ValueError(f"Simulation config does not exist, call /prepare endpoint first")
+            raise ValueError(f"Конфигурации симуляции нет — сначала вызовите /prepare")
         
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
@@ -401,7 +401,7 @@ class SimulationRunner:
         script_path = os.path.join(cls.SCRIPTS_DIR, script_name)
         
         if not os.path.exists(script_path):
-            raise ValueError(f"Script does not exist: {script_path}")
+            raise ValueError(f"Скрипт не найден: {script_path}")
         
         # Create action queue
         action_queue = Queue()
@@ -1626,7 +1626,7 @@ class SimulationRunner:
         # Get all Agent information from config file
         config_path = os.path.join(sim_dir, "simulation_config.json")
         if not os.path.exists(config_path):
-            raise ValueError(f"Simulation config does not exist: {simulation_id}")
+            raise ValueError(f"Конфигурация симуляции не найдена: {simulation_id}")
 
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)

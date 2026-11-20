@@ -77,12 +77,12 @@ class FileParser:
         path = Path(file_path)
 
         if not path.exists():
-            raise FileNotFoundError(f"File does not exist: {file_path}")
+            raise FileNotFoundError(f"Файл не найден: {file_path}")
 
         suffix = path.suffix.lower()
 
         if suffix not in cls.SUPPORTED_EXTENSIONS:
-            raise ValueError(f"Unsupported file format: {suffix}")
+            raise ValueError(f"Формат файла не поддерживается: {suffix}")
 
         if suffix == '.pdf':
             return cls._extract_from_pdf(file_path)
@@ -91,7 +91,7 @@ class FileParser:
         elif suffix == '.txt':
             return cls._extract_from_txt(file_path)
 
-        raise ValueError(f"Cannot handle file format: {suffix}")
+        raise ValueError(f"Не удалось разобрать формат файла: {suffix}")
 
     @staticmethod
     def _extract_from_pdf(file_path: str) -> str:
@@ -99,7 +99,7 @@ class FileParser:
         try:
             import fitz  # PyMuPDF
         except ImportError:
-            raise ImportError("PyMuPDF required: pip install PyMuPDF")
+            raise ImportError("Для PDF нужен PyMuPDF: pip install PyMuPDF")
 
         text_parts = []
         with fitz.open(file_path) as doc:

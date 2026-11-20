@@ -282,7 +282,7 @@ class SimulationManager:
                 progress_callback("reading", 0, "Подключаюсь к графу...")
 
             if not storage:
-                raise ValueError("storage (GraphStorage) is required for prepare_simulation")
+                raise ValueError("Для prepare_simulation нужен storage (GraphStorage)")
             reader = EntityReader(storage)
             
             if progress_callback:

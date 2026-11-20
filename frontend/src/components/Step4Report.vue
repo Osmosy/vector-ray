@@ -309,10 +309,10 @@
                     <div class="llm-meta">
                       <span class="meta-tag">Итерация {{ log.details?.iteration }}</span>
                       <span class="meta-tag" :class="{ active: log.details?.has_tool_calls }">
-                        Tools: {{ log.details?.has_tool_calls ? 'Yes' : 'No' }}
+                        Инструменты: {{ log.details?.has_tool_calls ? 'да' : 'нет' }}
                       </span>
                       <span class="meta-tag" :class="{ active: log.details?.has_final_answer, 'final-answer': log.details?.has_final_answer }">
-                        Final: {{ log.details?.has_final_answer ? 'Yes' : 'No' }}
+                        Итог: {{ log.details?.has_final_answer ? 'да' : 'нет' }}
                       </span>
                     </div>
                     <!-- Show special hint when it's the final answer -->

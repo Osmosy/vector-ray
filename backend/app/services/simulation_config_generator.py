@@ -477,7 +477,7 @@ class SimulationConfigGenerator:
                 import time
                 time.sleep(2 * (attempt + 1))
 
-        raise last_error or Exception("LLM call failed")
+        raise last_error or Exception("Вызов модели не удался")
     
     def _fix_truncated_json(self, content: str) -> str:
         """Fix truncated JSON"""

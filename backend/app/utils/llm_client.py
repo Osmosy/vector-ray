@@ -203,7 +203,7 @@ class LLMClient:
                 continue
 
         # All models failed
-        raise Exception(f"All models in cascade failed. Last error: {last_error}")
+        raise Exception(f"Все модели в цепочке отказали. Последняя ошибка: {last_error}")
 
     def chat_json(
         self,
@@ -237,7 +237,7 @@ class LLMClient:
         try:
             return json.loads(cleaned_response)
         except json.JSONDecodeError:
-            raise ValueError(f"Invalid JSON format from LLM: {cleaned_response}")
+            raise ValueError(f"Модель вернула невалидный JSON: {cleaned_response}")
 
     def reset_to_primary(self):
         """Вернуть основную модель задачи.

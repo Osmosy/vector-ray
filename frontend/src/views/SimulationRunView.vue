@@ -72,7 +72,7 @@ import { useRoute, useRouter } from 'vue-router'
 import GraphPanel from '../components/GraphPanel.vue'
 import Step3Simulation from '../components/Step3Simulation.vue'
 import { getProject, getGraphData } from '../api/graph'
-import { getSimulation, getSimulationConfig, stopSimulation, closeSimulationEnv, getEnvStatus } from '../api/simulation'
+import { getSimulation, getSimulationConfig, stopSimulation, closeSimulationEnv, getEnvStatus, getRunStatus } from '../api/simulation'
 
 const route = useRoute()
 const router = useRouter()
@@ -115,7 +115,7 @@ const statusClass = computed(() => {
 })
 
 const statusText = computed(() => {
-  if (currentStatus.value === 'error') return 'Error'
+  if (currentStatus.value === 'error') return 'Ошибка'
   if (currentStatus.value === 'completed') return 'Завершено'
   return 'Идёт'
 })
@@ -294,6 +294,20 @@ watch(isSimulating, (newValue) => {
   }
 }, { immediate: true })
 
+// Открытие уже завершённого прогона показывало «Идёт»: статус приходил только
+// событием от дочернего компонента, а при загрузке страницы оно не срабатывало.
+const syncRunStatus = async () => {
+  try {
+    const res = await getRunStatus(currentSimulationId.value)
+    const st = res?.data?.runner_status
+    if (st === 'completed' || st === 'stopped') currentStatus.value = 'completed'
+    else if (st === 'failed') currentStatus.value = 'error'
+    else if (st === 'running') currentStatus.value = 'processing'
+  } catch (e) {
+    // статус остаётся прежним — страница не должна падать из-за него
+  }
+}
+
 onMounted(() => {
   addLog('Инициализация SimulationRunView')
 
@@ -301,8 +315,9 @@ onMounted(() => {
   if (maxRounds.value) {
     addLog(`Кастомные раунды симуляции: ${maxRounds.value}`)
   }
-  
+
   loadSimulationData()
+  syncRunStatus()
 })
 
 onUnmounted(() => {

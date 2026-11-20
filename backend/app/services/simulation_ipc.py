@@ -183,7 +183,7 @@ class SimulationIPCClient:
         except OSError:
             pass
         
-        raise TimeoutError(f"Timeout waiting for command response ({timeout} seconds)")
+        raise TimeoutError(f"Не дождались ответа от команды за {timeout} с")
     
     def send_interview(
         self,

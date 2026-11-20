@@ -86,7 +86,7 @@
           </svg>
           <div class="action-bar-text">
             <span class="action-bar-title">Интерактивные инструменты</span>
-            <span class="action-bar-subtitle mono">{{ profiles.length }} agents available</span>
+            <span class="action-bar-subtitle mono">{{ profiles.length }} агентов в доступе</span>
           </div>
         </div>
           <div class="action-bar-tabs">
@@ -377,7 +377,7 @@
           <div v-if="surveyResults.length > 0" class="survey-results">
             <div class="results-header">
               <span class="results-title">Результаты опроса</span>
-              <span class="results-count">{{ surveyResults.length }} replies</span>
+              <span class="results-count">{{ surveyResults.length }} ответов</span>
             </div>
             <div class="results-list">
               <div 

@@ -67,7 +67,7 @@
             </div>
             <!-- If there are more files, show indicator -->
             <div v-if="project.files.length > 3" class="files-more">
-              +{{ project.files.length - 3 }} files
+              +{{ project.files.length - 3 }} файлов
             </div>
           </div>
           <!-- Placeholder when no files -->
@@ -337,14 +337,14 @@ const truncateText = (text, maxLength) => {
 
 // Generate title from simulation requirement (first 20 characters)
 const getSimulationTitle = (requirement) => {
-  if (!requirement) return 'Unnamed Simulation'
+  if (!requirement) return 'Симуляция без названия'
   const title = requirement.slice(0, 20)
   return requirement.length > 20 ? title + '...' : title
 }
 
 // Format simulation_id display (first 6 characters)
 const formatSimulationId = (simulationId) => {
-  if (!simulationId) return 'SIM_UNKNOWN'
+  if (!simulationId) return 'НЕТ ID'
   const prefix = simulationId.replace('sim_', '').slice(0, 6)
   return `SIM_${prefix.toUpperCase()}`
 }
