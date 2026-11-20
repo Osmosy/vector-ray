@@ -14,6 +14,8 @@ Usage:
 """
 
 from sim_time import resolve_start_hour
+from action_logger import SimulationLogManager
+from run_parallel_simulation import fetch_new_actions_from_db, get_agent_names_from_config
 import argparse
 import asyncio
 import json
@@ -599,7 +601,14 @@ class TwitterSimulationRunner:
         
         await self.env.reset()
         print("Environment initialization complete\n")
-        
+
+        # Логгер действий: без него бэкенд не видит ни прогресса, ни завершения —
+        # он читает именно twitter/actions.jsonl (симуляция «висит» в running).
+        log_manager = SimulationLogManager(self.simulation_dir)
+        self.action_logger = log_manager.get_twitter_logger()
+        self.action_logger.log_simulation_start(self.config)
+        agent_names = get_agent_names_from_config(self.config)
+
         # Initialize IPC handler
         self.ipc_handler = IPCHandler(self.simulation_dir, self.env, self.agent_graph)
         self.ipc_handler.update_status("running")
@@ -608,6 +617,8 @@ class TwitterSimulationRunner:
         event_config = self.config.get("event_config", {})
         initial_posts = event_config.get("initial_posts", [])
         
+        self.action_logger.log_round_start(0, 0)
+        initial_action_count = 0
         if initial_posts:
             print(f"Execute initial events ({len(initial_posts)}initial posts)...")
             initial_actions = {}
@@ -620,18 +631,29 @@ class TwitterSimulationRunner:
                         action_type=ActionType.CREATE_POST,
                         action_args={"content": content}
                     )
+                    self.action_logger.log_action(
+                        round_num=0,
+                        agent_id=agent_id,
+                        agent_name=agent_names.get(agent_id, f"Agent_{agent_id}"),
+                        action_type="CREATE_POST",
+                        action_args={"content": content},
+                    )
+                    initial_action_count += 1
                 except Exception as e:
                     print(f"  Warning: Unable to create for Agent {agent_id}Create initial posts: {e}")
             
             if initial_actions:
                 await self.env.step(initial_actions)
                 print(f"  Published {len(initial_actions)} initial posts")
+        self.action_logger.log_round_end(0, initial_action_count)
         
         # Main simulation loop
         print("\nStart simulation loop...")
         start_time = datetime.now()
-        
+
         start_hour = resolve_start_hour(time_config)
+        total_actions = initial_action_count
+        last_rowid = 0
 
         for round_num in range(total_rounds):
             # Calculate current simulation time
@@ -644,7 +666,10 @@ class TwitterSimulationRunner:
                 self.env, simulated_hour, round_num
             )
             
+            self.action_logger.log_round_start(round_num + 1, simulated_hour)
+
             if not active_agents:
+                self.action_logger.log_round_end(round_num + 1, 0)
                 continue
             
             # Build action
@@ -655,6 +680,23 @@ class TwitterSimulationRunner:
             
             # Execute action
             await self.env.step(actions)
+
+            # Считать реально выполненные действия из базы и записать их в лог
+            actual_actions, last_rowid = fetch_new_actions_from_db(
+                db_path, last_rowid, agent_names
+            )
+            round_action_count = 0
+            for action_data in actual_actions:
+                self.action_logger.log_action(
+                    round_num=round_num + 1,
+                    agent_id=action_data['agent_id'],
+                    agent_name=action_data['agent_name'],
+                    action_type=action_data['action_type'],
+                    action_args=action_data['action_args'],
+                )
+                round_action_count += 1
+            total_actions += round_action_count
+            self.action_logger.log_round_end(round_num + 1, round_action_count)
             
             # Print progress
             if (round_num + 1) % 10 == 0 or round_num == 0:
@@ -665,6 +707,8 @@ class TwitterSimulationRunner:
                       f"- {len(active_agents)} agents active "
                       f"- elapsed: {elapsed:.1f}s")
         
+        self.action_logger.log_simulation_end(total_rounds, total_actions)
+
         total_elapsed = (datetime.now() - start_time).total_seconds()
         print(f"\nSimulation loop completed!")
         print(f"  - Total time: {total_elapsed:.1f}seconds")

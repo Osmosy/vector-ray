@@ -14,6 +14,8 @@ Usage:
 """
 
 from sim_time import resolve_start_hour
+from action_logger import SimulationLogManager
+from run_parallel_simulation import fetch_new_actions_from_db, get_agent_names_from_config
 import argparse
 import asyncio
 import json
@@ -584,7 +586,14 @@ class RedditSimulationRunner:
         
         await self.env.reset()
         print("Environment initialization complete\n")
-        
+
+        # Логгер действий: бэкенд читает reddit/actions.jsonl и без него не видит
+        # ни прогресса, ни завершения симуляции.
+        log_manager = SimulationLogManager(self.simulation_dir)
+        self.action_logger = log_manager.get_reddit_logger()
+        self.action_logger.log_simulation_start(self.config)
+        agent_names = get_agent_names_from_config(self.config)
+
         # Initialize IPC handler
         self.ipc_handler = IPCHandler(self.simulation_dir, self.env, self.agent_graph)
         self.ipc_handler.update_status("running")
@@ -626,6 +635,9 @@ class RedditSimulationRunner:
         
         start_hour = resolve_start_hour(time_config)
 
+        total_actions = 0
+        last_rowid = 0
+
         for round_num in range(total_rounds):
             simulated_minutes = start_hour * 60 + round_num * minutes_per_round
             simulated_hour = (simulated_minutes // 60) % 24
@@ -635,7 +647,10 @@ class RedditSimulationRunner:
                 self.env, simulated_hour, round_num
             )
             
+            self.action_logger.log_round_start(round_num + 1, simulated_hour)
+
             if not active_agents:
+                self.action_logger.log_round_end(round_num + 1, 0)
                 continue
             
             actions = {
@@ -644,6 +659,22 @@ class RedditSimulationRunner:
             }
             
             await self.env.step(actions)
+
+            actual_actions, last_rowid = fetch_new_actions_from_db(
+                db_path, last_rowid, agent_names
+            )
+            round_action_count = 0
+            for action_data in actual_actions:
+                self.action_logger.log_action(
+                    round_num=round_num + 1,
+                    agent_id=action_data['agent_id'],
+                    agent_name=action_data['agent_name'],
+                    action_type=action_data['action_type'],
+                    action_args=action_data['action_args'],
+                )
+                round_action_count += 1
+            total_actions += round_action_count
+            self.action_logger.log_round_end(round_num + 1, round_action_count)
             
             if (round_num + 1) % 10 == 0 or round_num == 0:
                 elapsed = (datetime.now() - start_time).total_seconds()
@@ -653,6 +684,8 @@ class RedditSimulationRunner:
                       f"- {len(active_agents)} agents active "
                       f"- elapsed: {elapsed:.1f}s")
         
+        self.action_logger.log_simulation_end(total_rounds, total_actions)
+
         total_elapsed = (datetime.now() - start_time).total_seconds()
         print(f"\nSimulation loop completed!")
         print(f"  - Total time: {total_elapsed:.1f}seconds")
