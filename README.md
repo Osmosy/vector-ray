@@ -4,105 +4,105 @@
 
 # Vector Ray-Offline
 
-**Fully local fork of [MiroFish](https://github.com/666ghj/MiroFish) — no cloud APIs required. Russian UI.**
+**Полностью локальный форк [MiroFish](https://github.com/666ghj/MiroFish) — без облачных API. Русский интерфейс.**
 
-*A multi-agent swarm intelligence engine that simulates public opinion, market sentiment, and social dynamics. Entirely on your hardware.*
+*Движок мультиагентной симуляции: общественное мнение, настроения рынка и социальная динамика — целиком на вашем железе.*
 
-[![GitHub Stars](https://img.shields.io/github/stars/Osmosy/vector-ray?style=flat-square&color=DAA520)](https://github.com/Osmosy/vector-ray/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/Osmosy/vector-ray?style=flat-square)](https://github.com/Osmosy/vector-ray/network)
-[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue?style=flat-square)](./LICENSE)
+[![Звёзды](https://img.shields.io/github/stars/Osmosy/vector-ray?style=flat-square&color=DAA520&label=звёзды)](https://github.com/Osmosy/vector-ray/stargazers)
+[![Форки](https://img.shields.io/github/forks/Osmosy/vector-ray?style=flat-square&label=форки)](https://github.com/Osmosy/vector-ray/network)
+[![Лицензия](https://img.shields.io/badge/лицензия-AGPL--3.0-blue?style=flat-square)](./LICENSE)
 
 </div>
 
-## What is this?
+## Что это
 
-Vector Ray is a multi-agent simulation engine: upload any document (press release, policy draft, financial report), and it generates hundreds of AI agents with unique personalities that simulate the public reaction on social media. Posts, arguments, opinion shifts — hour by hour.
+Vector Ray — движок мультиагентной симуляции. Загружаете документ — пресс-релиз, законопроект, финансовый отчёт — и получаете сотни ИИ-агентов с собственными характерами, которые воспроизводят реакцию аудитории в имитации соцсети: посты, споры, сдвиги мнений, час за часом.
 
-The [original MiroFish](https://github.com/666ghj/MiroFish) was built for the Chinese market (Chinese UI, Zep Cloud for knowledge graphs, DashScope API). This fork makes it **fully local and Russian-localized**:
+[Оригинальный MiroFish](https://github.com/666ghj/MiroFish) делался под китайский рынок: китайский интерфейс, Zep Cloud для графа знаний, DashScope для моделей. Этот форк переводит всё на локальный контур и на русский язык:
 
-| Original MiroFish | Vector Ray-Offline |
+| Оригинальный MiroFish | Vector Ray-Offline |
 |---|---|
-| Chinese UI | **Russian UI** (interface and LLM prompts translated) |
-| Zep Cloud (graph memory) | **Neo4j Community Edition 5.18** |
-| DashScope / OpenAI API (LLM) | **Ollama** (qwen2.5, llama3, etc.) |
-| Zep Cloud embeddings | **nomic-embed-text** via Ollama |
-| Cloud API keys required | **Zero cloud dependencies** |
+| Китайский интерфейс | **Русский интерфейс** (переведены интерфейс и промпты моделей) |
+| Zep Cloud (память графа) | **Neo4j Community Edition 5.18** |
+| DashScope / OpenAI API (модели) | **Ollama** (qwen2.5, llama3 и другие локальные модели) |
+| Эмбеддинги Zep Cloud | **nomic-embed-text** через Ollama |
+| Нужны облачные ключи | **Ни одной облачной зависимости** |
 
-## Workflow
+## Как это работает
 
-1. **Graph Build** — Extracts entities (people, companies, events) and relationships from your document. Builds a knowledge graph with individual and group memory via Neo4j.
-2. **Env Setup** — Generates hundreds of agent personas, each with unique personality, opinion bias, reaction speed, influence level, and memory of past events.
-3. **Simulation** — Agents interact on simulated social platforms: posting, replying, arguing, shifting opinions. The system tracks sentiment evolution, topic propagation, and influence dynamics in real time.
-4. **Report** — A ReportAgent analyzes the post-simulation environment, interviews a focus group of agents, searches the knowledge graph for evidence, and generates a structured analysis.
-5. **Interaction** — Chat with any agent from the simulated world. Ask them why they posted what they posted. Full memory and personality persists.
+1. **Граф** — из документа извлекаются сущности (люди, компании, события) и связи между ними. Строится граф знаний с памятью отдельных участников и групп в Neo4j.
+2. **Окружение** — генерируются сотни персонажей: характер, склонность к риску, скорость реакции, уровень влияния, память о прошлых событиях.
+3. **Симуляция** — агенты общаются на имитированных площадках: постят, отвечают, спорят, меняют мнение. Система в реальном времени отслеживает динамику настроений, распространение тем и влияние участников.
+4. **Отчёт** — агент отчёта разбирает состояние после симуляции, проводит интервью с фокус-группой, ищет доказательства в графе знаний и собирает структурированный анализ.
+5. **Взаимодействие** — чат с любым агентом симуляции: спросите, почему он написал именно это. Память и характер сохраняются.
 
-## Documentation (Russian)
+## Документация
 
 - **[Руководство пользователя](docs/USER_GUIDE.md)** — установка в Docker и без него, настройка `.env`, работа по шагам, где лежат данные, разбор типичных ошибок.
 - **[Архитектура и диаграммы](docs/ARCHITECTURE.md)** — слои системы, путь одного прогона, решения форка.
 - **[Живая схема архитектуры](https://osmosy.github.io/vector-ray/vector-ray.architecture.html)** — интерактивная схема: темы, три сценария просмотра, поиск по узлам, трассировка связей, экспорт.
 
-## Quick Start
+## Быстрый старт
 
-### Prerequisites
+### Что нужно
 
-- Docker & Docker Compose (recommended), **or**
+- Docker и Docker Compose (рекомендуется), **либо**
 - Python 3.11+, Node.js 18+, Neo4j 5.18+, Ollama
 
-### Option A: Docker (easiest)
+### Вариант А: Docker (проще всего)
 
 ```bash
 git clone https://github.com/Osmosy/vector-ray.git
 cd vector-ray
 cp .env.example .env
 
-# Ollama stays on the host — compose brings up only Neo4j and the app
+# Ollama остаётся на хосте — compose поднимает только Neo4j и приложение
 ollama pull qwen2.5:14b
 ollama pull nomic-embed-text
 
-# Inside the container localhost means the container itself,
-# so point it at the host and match the password compose sets for Neo4j
+# Внутри контейнера localhost — это сам контейнер, поэтому адреса моделей
+# указывают на хост, а пароль Neo4j совпадает с тем, что задаёт compose
 sed -i 's|http://localhost:11434|http://host.docker.internal:11434|g' .env
 sed -i 's|^NEO4J_URI=.*|NEO4J_URI=bolt://neo4j:7687|' .env
 sed -i 's|^NEO4J_PASSWORD=.*|NEO4J_PASSWORD=vectorray123|' .env
 
 docker compose up -d
-docker compose ps      # both containers Up (healthy)
+docker compose ps      # оба контейнера Up (healthy)
 ```
 
-Open `http://localhost:3000` — that's it. Neo4j Browser is on `http://localhost:7474`.
+Открыть `http://localhost:3000`. Neo4j Browser — на `http://localhost:7474`.
 
-### Option B: Manual
+### Вариант Б: вручную
 
-**1. Start Neo4j**
+**1. Neo4j**
 
 ```bash
 docker run -d --name neo4j \
   -p 7474:7474 -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/vector-ray \
+  -e NEO4J_AUTH=neo4j/vectorray123 \
   neo4j:5.18-community
 ```
 
-**2. Start Ollama & pull models**
+**2. Ollama и модели**
 
 ```bash
 ollama serve &
-ollama pull qwen2.5:32b      # LLM (or qwen2.5:14b for less VRAM)
-ollama pull nomic-embed-text  # Embeddings (768d)
+ollama pull qwen2.5:32b      # модель для рассуждений (или qwen2.5:14b, если мало видеопамяти)
+ollama pull nomic-embed-text  # эмбеддинги, 768 измерений
 ```
 
-**3. Configure & run backend**
+**3. Бэкенд**
 
 ```bash
 cp .env.example .env
-# Edit .env if your Neo4j/Ollama are on non-default ports
+# поправьте .env, если Neo4j или Ollama живут на других портах
 
 cd backend
-pip install -r requirements.txt
-python run.py
+pip install -r requirements.txt   # либо: uv sync
+python run.py                     # либо: uv run python run.py
 ```
 
-**4. Run frontend**
+**4. Фронтенд**
 
 ```bash
 cd frontend
@@ -110,14 +110,14 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Открыть `http://localhost:3000`. Одной командой из корня: `npm run setup:all && npm run dev`.
 
-## Configuration
+## Настройка
 
-All settings are in `.env` (copy from `.env.example`):
+Все параметры — в `.env` (копия `.env.example`):
 
 ```bash
-# LLM — points to local Ollama (OpenAI-compatible API)
+# Модели — локальная Ollama (API, совместимый с OpenAI)
 LLM_API_KEY=ollama
 LLM_BASE_URL=http://localhost:11434/v1
 LLM_MODEL_NAME=qwen2.5:32b
@@ -125,86 +125,70 @@ LLM_MODEL_NAME=qwen2.5:32b
 # Neo4j
 NEO4J_URI=bolt://localhost:7687
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=vector-ray
+NEO4J_PASSWORD=vectorray123
 
-# Embeddings
+# Эмбеддинги
 EMBEDDING_MODEL=nomic-embed-text
 EMBEDDING_BASE_URL=http://localhost:11434
 ```
 
-Works with any OpenAI-compatible API — swap Ollama for Claude, GPT, or any other provider by changing `LLM_BASE_URL` and `LLM_API_KEY`.
+Подойдёт любой провайдер с OpenAI-совместимым API: замените Ollama на облачную модель, поменяв только `LLM_BASE_URL` и `LLM_API_KEY`. Полный список переменных — в [руководстве пользователя](docs/USER_GUIDE.md#4-настройка-env).
 
-## Architecture
+## Архитектура
 
-This fork introduces a clean abstraction layer between the application and the graph database:
+Форк добавляет чистый слой абстракции между приложением и графовой базой:
 
-```
-┌─────────────────────────────────────────┐
-│              Flask API                   │
-│  graph.py  simulation.py  report.py     │
-└──────────────┬──────────────────────────┘
-               │ app.extensions['neo4j_storage']
-┌──────────────▼──────────────────────────┐
-│           Service Layer                  │
-│  EntityReader  GraphToolsService         │
-│  GraphMemoryUpdater  ReportAgent         │
-└──────────────┬──────────────────────────┘
-               │ storage: GraphStorage
-┌──────────────▼──────────────────────────┐
-│         GraphStorage (abstract)          │
-│              │                            │
-│    ┌─────────▼─────────┐                │
-│    │   Neo4jStorage     │                │
-│    │  ┌───────────────┐ │                │
-│    │  │ EmbeddingService│ ← Ollama       │
-│    │  │ NERExtractor   │ ← Ollama LLM   │
-│    │  │ SearchService  │ ← Hybrid search │
-│    │  └───────────────┘ │                │
-│    └───────────────────┘                │
-└─────────────────────────────────────────┘
-               │
-        ┌──────▼──────┐
-        │  Neo4j CE   │
-        │  5.18       │
-        └─────────────┘
+```mermaid
+flowchart TB
+    API["API Flask<br/>graph · simulation · report · settings"]
+    SVC["Слой сервисов<br/>EntityReader · GraphToolsService · GraphMemoryUpdater · ReportAgent"]
+    ST["GraphStorage<br/>абстрактный интерфейс"]
+    N4J[("Neo4j 5.18 CE<br/>узлы · связи · эмбеддинги")]
+    LLM["Ollama<br/>модель и nomic-embed-text"]
+
+    API -->|"app.extensions['neo4j_storage']"| SVC
+    SVC -->|"storage: GraphStorage"| ST
+    ST -->|"Cypher"| N4J
+    SVC -->|"промпты · эмбеддинги"| LLM
 ```
 
-**Key design decisions:**
+**Ключевые решения:**
 
-- `GraphStorage` is an abstract interface — swap Neo4j for any other graph DB by implementing one class
-- Dependency injection via Flask `app.extensions` — no global singletons
-- Hybrid search: 0.7 × vector similarity + 0.3 × BM25 keyword search
-- Synchronous NER/RE extraction via local LLM (replaces Zep's async episodes)
-- All original dataclasses and LLM tools (InsightForge, Panorama, Agent Interviews) preserved
+- `GraphStorage` — абстрактный интерфейс: замена Neo4j на другую графовую СУБД это один новый класс.
+- Внедрение зависимостей через `app.extensions` во Flask, без глобальных синглтонов.
+- Гибридный поиск: 0.7 × косинусная близость вектора + 0.3 × BM25 по ключевым словам.
+- Синхронное извлечение сущностей и связей локальной моделью вместо асинхронных «эпизодов» Zep.
+- Все исходные структуры данных и инструменты агента отчёта (InsightForge, Panorama, интервью с агентами) сохранены.
 
-## Hardware Requirements
+## Требования к железу
 
-| Component | Minimum | Recommended |
+| Компонент | Минимум | Рекомендуется |
 |---|---|---|
-| RAM | 16 GB | 32 GB |
-| VRAM (GPU) | 10 GB (14b model) | 24 GB (32b model) |
-| Disk | 20 GB | 50 GB |
-| CPU | 4 cores | 8+ cores |
+| ОЗУ | 16 ГБ | 32 ГБ |
+| Видеопамять | 10 ГБ (модель 14b) | 24 ГБ (модель 32b) |
+| Диск | 20 ГБ | 50 ГБ |
+| Процессор | 4 ядра | 8+ ядер |
 
-CPU-only mode works but is significantly slower for LLM inference. For lighter setups, use `qwen2.5:14b` or `qwen2.5:7b`.
+Без GPU всё работает, но рассуждения модели заметно медленнее. Для слабых машин берите `qwen2.5:14b` или `qwen2.5:7b`.
 
-## Use Cases
+## Где пригодится
 
-- **PR crisis testing** — simulate the public reaction to a press release before publishing
-- **Trading signal generation** — feed financial news and observe simulated market sentiment
-- **Policy impact analysis** — test draft regulations against simulated public response
-- **Creative experiments** — someone fed it a classical Chinese novel with a lost ending; the agents wrote a narratively consistent conclusion
+- **Проверка PR-рисков** — проиграть реакцию аудитории на пресс-релиз до публикации.
+- **Сигналы для рынка** — прогнать финансовые новости и посмотреть на смоделированные настроения.
+- **Анализ регулирования** — проверить черновик нормативного акта на смоделированной реакции.
+- **Творческие эксперименты** — кто-то скормил системе классический роман с утраченной концовкой, и агенты дописали связное завершение.
 
-## License
+## Лицензия
 
-AGPL-3.0 — same as the original MiroFish project. See [LICENSE](./LICENSE).
+AGPL-3.0 — как и у оригинального MiroFish. См. [LICENSE](./LICENSE).
 
-## Credits & Attribution
+## Авторы и происхождение
 
-This is a modified fork of [MiroFish](https://github.com/666ghj/MiroFish) by [666ghj](https://github.com/666ghj), originally supported by [Shanda Group](https://www.shanda.com/). The simulation engine is powered by [OASIS](https://github.com/camel-ai/oasis) from the CAMEL-AI team.
+Это изменённый форк [MiroFish](https://github.com/666ghj/MiroFish) авторства [666ghj](https://github.com/666ghj), который изначально поддерживался [Shanda Group](https://www.shanda.com/). Движок симуляции — [OASIS](https://github.com/camel-ai/oasis) команды CAMEL-AI.
 
-**Modifications in this fork:**
-- Backend migrated from Zep Cloud to local Neo4j CE 5.18 + Ollama
-- Frontend and LLM prompts translated from Chinese to Russian; report agent writes Russian reports
-- All Zep references replaced with Neo4j across the UI
-- Rebranded to Vector Ray Offline
+**Что изменено в этом форке:**
+
+- Бэкенд переведён с Zep Cloud на локальные Neo4j CE 5.18 и Ollama.
+- Интерфейс и промпты моделей переведены с китайского на русский; агент отчёта пишет по-русски.
+- Все упоминания Zep в интерфейсе заменены на Neo4j.
+- Проект переименован в Vector Ray Offline.
