@@ -22,7 +22,7 @@ class Config:
 
     # Конфигурация Flask
     SECRET_KEY = os.environ.get('SECRET_KEY', 'vector-ray-secret-key')
-    DEBUG = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
 
     # Конфигурация JSON - отключить ASCII escaping для отображения русского текста напрямую
     JSON_AS_ASCII = False
